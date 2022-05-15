@@ -1,0 +1,230 @@
+version: "3.4"
+#x-env-vars: &env-vars
+#  - DB_USERNAME=${DB_USERNAME}
+#  - DB_PASSWORD=${DB_PASSWORD}
+#  - DB_HOST=${DB_HOST}
+#  - DB_PORT=${DB_PORT}
+#  - DB_NAME=${DB_NAME}
+#  - ENCRYPT_SECRET_KEY=${ENCRYPT_SECRET_KEY}
+#  - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+#  - MYSQL_HOST=${MYSQL_HOST}
+#  - MYSQL_USER=${MYSQL_USER}
+#  - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+#  - MYSQL_DB=${MYSQL_DB}
+
+services:
+  alinedb:
+    container_name: alinedb
+    image: alinedb_image
+    ports:
+      - "3306:3306"
+    restart: on-failure
+    #restart_policy:
+    #    condition: on-failure
+    #    delay: 5s
+    #    max_attempts: 3
+    volumes:
+      - alinedb_volume:/var/lib/mysql
+    #environment: *env-vars
+    environment:
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - DB_NAME=${DB_NAME}
+      - ENCRYPT_SECRET_KEY=${ENCRYPT_SECRET_KEY}
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+      - MYSQL_HOST=${MYSQL_HOST}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_DB=${MYSQL_DB}
+    networks: 
+      - capstone_network
+
+  gateway:
+    container_name: gateway
+    image: aline-gateway
+    ports:
+      - "4000:4000"
+    depends_on:
+      - alinedb
+    restart: on-failure
+    #restart_policy:
+    #    condition: on-failure
+    #    delay: 5s
+    #    max_attempts: 3
+    #environment: *env-vars
+    environment:
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - DB_NAME=${DB_NAME}
+      - ENCRYPT_SECRET_KEY=${ENCRYPT_SECRET_KEY}
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+      - MYSQL_HOST=${MYSQL_HOST}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_DB=${MYSQL_DB}
+    networks: 
+      - capstone_network
+
+  user:
+    container_name: user
+    image: aline-user-microservice
+    ports:
+      - "8070:8070"
+    depends_on:
+      - alinedb
+    restart: on-failure
+    #restart_policy:
+    #    condition: on-failure
+    #    delay: 5s
+    #    max_attempts: 3
+    links:
+      - alinedb:alinedb_container
+    #environment: *env-vars
+    environment:
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - DB_NAME=${DB_NAME}
+      - ENCRYPT_SECRET_KEY=${ENCRYPT_SECRET_KEY}
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+      - MYSQL_HOST=${MYSQL_HOST}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_DB=${MYSQL_DB}
+    networks: 
+      - capstone_network
+
+  underwriter:
+    container_name: underwriter
+    image: aline-underwriter-microservice
+    ports:
+      - "8071:8071"
+    depends_on:
+      - alinedb
+    restart: on-failure
+    #restart_policy:
+    #    condition: on-failure
+    #    delay: 5s
+    #    max_attempts: 3
+    links:
+      - alinedb:alinedb_container
+    #environment: *env-vars
+    environment:
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - DB_NAME=${DB_NAME}
+      - ENCRYPT_SECRET_KEY=${ENCRYPT_SECRET_KEY}
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+      - MYSQL_HOST=${MYSQL_HOST}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_DB=${MYSQL_DB}
+    networks: 
+      - capstone_network
+
+  account:
+    container_name: account
+    image: aline-account-microservice
+    ports:
+      - "8072:8072"
+    depends_on:
+      - alinedb
+    restart: on-failure
+    #restart_policy:
+    #    condition: on-failure
+    #    delay: 5s
+    #    max_attempts: 3
+    links:
+      - alinedb:alinedb_container
+    #environment: *env-vars
+    environment:
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - DB_NAME=${DB_NAME}
+      - ENCRYPT_SECRET_KEY=${ENCRYPT_SECRET_KEY}
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+      - MYSQL_HOST=${MYSQL_HOST}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_DB=${MYSQL_DB}
+    networks: 
+      - capstone_network
+
+  transaction:
+    container_name: transaction
+    image: aline-transaction-microservice
+    ports:
+      - "8073:8073"
+    depends_on:
+      - alinedb 
+    restart: on-failure
+    #restart_policy:
+    #    condition: on-failure
+    #    delay: 5s
+    #    max_attempts: 3
+    links:
+      - alinedb:alinedb_container
+    #environment: *env-vars
+    environment:
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - DB_NAME=${DB_NAME}
+      - ENCRYPT_SECRET_KEY=${ENCRYPT_SECRET_KEY}
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+      - MYSQL_HOST=${MYSQL_HOST}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_DB=${MYSQL_DB}
+    networks: 
+      - capstone_network
+
+  bank:
+    container_name: bank
+    image: aline-bank-microservice
+    ports:
+      - "8083:8083"
+    depends_on:
+      - alinedb
+    restart: on-failure
+    #restart_policy:
+    #    condition: on-failure
+    #    delay: 5s
+    #    max_attempts: 3
+    links:
+      - alinedb:alinedb_container
+    #environment: *env-vars
+    environment:
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - DB_NAME=${DB_NAME}
+      - ENCRYPT_SECRET_KEY=${ENCRYPT_SECRET_KEY}
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+      - MYSQL_HOST=${MYSQL_HOST}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_DB=${MYSQL_DB}
+    networks: 
+      - capstone_network
+
+volumes:
+  alinedb_volume:
+    external: true
+    #name: alinedb_volume
+
+
+networks:
+  capstone_network:
+    #name: capstone_network
