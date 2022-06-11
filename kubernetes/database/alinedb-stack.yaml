@@ -1,0 +1,77 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.version: 1.26.1 (a9d05d509)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: alinedb
+  name: alinedb-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: alinedb
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert
+        kompose.version: 1.26.1 (a9d05d509)
+      creationTimestamp: null
+      labels:
+        io.kompose.service: alinedb
+    spec:
+      containers:   
+        - name: alinedb
+          image: alinedb_image:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 3306
+          envFrom:
+          - secretRef:
+              name: database-secret
+
+          resources: {}
+          volumeMounts:
+            - mountPath: /var/lib/mysql
+              name: alinedb-volume
+      volumes:
+        - name: alinedb-volume
+          persistentVolumeClaim:
+            claimName: alinedb-volume
+status: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.version: 1.26.1 (a9d05d509)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: alinedb
+  name: alinedb-service
+spec:
+  ports:
+    - name: "3306"
+      port: 3306
+      targetPort: 3306
+  selector:
+    io.kompose.service: alinedb
+status:
+  loadBalancer: {}
+
+
+
+
+
+
+
+
+
+
+
+

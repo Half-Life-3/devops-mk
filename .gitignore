@@ -1,0 +1,3 @@
+## kubernetes secrets ##
+kubernetes/database/database-secret.yaml
+kubernetes/microservices/microservices-secret.yaml
