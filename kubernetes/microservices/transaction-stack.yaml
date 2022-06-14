@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: transaction
+  labels:
+    app: transaction
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: transaction
+  template:
+    metadata:
+      labels:
+        app: transaction
+    spec:
+      containers:
+        - name: transaction-ms
+          image: aline-transaction-microservice:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8073
+          envFrom:
+          - secretRef:
+              name: microservices-secret
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: transaction-service
+spec:
+  selector:
+    app: transaction
+  type: NodePort
+  ports:
+  - protocol: TCP
+    nodePort: 30003
+    port: 8073
+    targetPort: 8073
