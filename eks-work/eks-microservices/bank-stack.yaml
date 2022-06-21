@@ -1,0 +1,38 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: bank-service
+spec:
+  selector:
+    app: bank
+  ports:
+  - protocol: TCP
+    port: 8083
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bank-microservice
+  labels:
+    app: bank
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bank
+  template:
+    metadata:
+      labels:
+        app: bank
+    spec:
+      containers:
+      - name: bank-ms
+        image: 047032559530.dkr.ecr.us-east-1.amazonaws.com/aline-bank-microservice:latest     
+        imagePullPolicy: IfNotPresent
+        ports:
+          - containerPort: 8083
+        envFrom:
+        - secretRef:
+            name: microservices-secret 
+        resources: {}
+status: {}
