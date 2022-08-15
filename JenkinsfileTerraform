@@ -28,7 +28,7 @@ pipeline {
             try{
                 sh(script: 'terraform apply -out {PLAN_FILE}.tfplan')
             }
-            catch{
+            catch(all){
                 sh(script: 'terraform apply')
             }
         }
