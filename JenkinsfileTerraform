@@ -8,14 +8,15 @@ pipeline {
     }
     stage('Terraform init'){
       steps{
-        sh './terraform init'
+        sh 'cd terraform'
+        sh 'terraform init'
       }
     }
     stage('Plan') {
       steps {
         script{
             try{
-                sh(script: 'cd terraform; terraform plan -out ${PLAN_FILE}.tfplan')
+                sh(script: './terraform plan -out ${PLAN_FILE}.tfplan')
             }
             catch(all){
                 sh(script: 'terraform plan')
