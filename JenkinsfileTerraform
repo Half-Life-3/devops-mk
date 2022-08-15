@@ -16,7 +16,7 @@ pipeline {
       steps {
         script{
             try{
-                sh(script: 'terraform plan -out {PLAN_FILE}.tfplan')
+                sh(script: 'terraform plan -out ${PLAN_FILE}.tfplan')
             }
             catch(all){
                 sh(script: 'terraform plan')
