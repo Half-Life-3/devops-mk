@@ -1,14 +1,16 @@
 pipeline {
   agent any
-  stages {
+  stages{
     stage('AWS Login') {
         steps{
             sh './aws_login.sh'
         }
     }
     stage('Terraform init'){
+      steps{
         sh 'cd terraform'
         sh 'terraform init'
+      }
     }
     stage('Plan') {
       steps {
