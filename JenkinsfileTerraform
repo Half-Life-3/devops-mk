@@ -27,7 +27,7 @@ pipeline {
       steps {
         script {
             try{
-                sh(script: 'terraform apply -auto-approve ${PLAN_FILE}.tfplan')
+                sh(script: 'cd terraform; terraform apply -auto-approve ${PLAN_FILE}.tfplan')
             }
             catch(all){
                 sh(script: 'terraform apply')
