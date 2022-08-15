@@ -8,7 +8,7 @@ pipeline {
     }
     stage('Terraform init'){
       steps{
-        sh 'cd devops-mk/terraform; terraform init'
+        sh 'cd terraform; terraform init'
       }
     }
     stage('Plan') {
