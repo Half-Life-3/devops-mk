@@ -1,0 +1,36 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: user-service
+spec:
+  selector:
+    app: user
+  ports:
+  - protocol: TCP
+    port: 8070
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user
+  labels:
+    app: user
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: user
+  template:
+    metadata:
+      labels:
+        app: user
+    spec:
+      containers:
+        - name: user-ms
+          image: aline-user-microservice:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8070
+          envFrom:
+          - secretRef:
+              name: microservices-secret

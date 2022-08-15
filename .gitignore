@@ -1,0 +1,5 @@
+## kubernetes secrets ##
+kubernetes/database/database-secret.yaml
+kubernetes/microservices/microservices-secret.yaml
+kubernetes/eks-work/*
+docker-compose/cloud_formation_template
