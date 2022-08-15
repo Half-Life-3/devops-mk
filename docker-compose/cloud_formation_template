@@ -1,0 +1,1094 @@
+AWSTemplateFormatVersion: 2010-09-09
+Resources:
+  AccountService:
+    DependsOn:
+    - AccountTCP8072Listener
+    Properties:
+      Cluster:
+        Fn::GetAtt:
+        - Cluster
+        - Arn
+      DeploymentConfiguration:
+        MaximumPercent: 200
+        MinimumHealthyPercent: 100
+      DeploymentController:
+        Type: ECS
+      DesiredCount: 1
+      LaunchType: FARGATE
+      LoadBalancers:
+      - ContainerName: account
+        ContainerPort: 8072
+        TargetGroupArn:
+          Ref: AccountTCP8072TargetGroup
+      NetworkConfiguration:
+        AwsvpcConfiguration:
+          AssignPublicIp: ENABLED
+          SecurityGroups:
+          - Ref: DefaultNetwork
+          Subnets:
+          - subnet-0de1ea87b455759ff
+          - subnet-0003ec11c58f1dc5b
+          - subnet-07b63c009071899f1
+          - subnet-027f93db3892cbb8f
+          - subnet-0ec8ab1226a85df4e
+          - subnet-009a1917fd1633988
+      PlatformVersion: 1.4.0
+      PropagateTags: SERVICE
+      SchedulingStrategy: REPLICA
+      ServiceRegistries:
+      - RegistryArn:
+          Fn::GetAtt:
+          - AccountServiceDiscoveryEntry
+          - Arn
+      Tags:
+      - Key: com.docker.compose.project
+        Value: devops-mk
+      - Key: com.docker.compose.service
+        Value: account
+      TaskDefinition:
+        Ref: AccountTaskDefinition
+    Type: AWS::ECS::Service
+  AccountServiceDiscoveryEntry:
+    Properties:
+      Description: '"account" service discovery entry in Cloud Map'
+      DnsConfig:
+        DnsRecords:
+        - TTL: 60
+          Type: A
+        RoutingPolicy: MULTIVALUE
+      HealthCheckCustomConfig:
+        FailureThreshold: 1
+      Name: account
+      NamespaceId:
+        Ref: CloudMap
+    Type: AWS::ServiceDiscovery::Service
+  AccountTCP8072Listener:
+    Properties:
+      DefaultActions:
+      - ForwardConfig:
+          TargetGroups:
+          - TargetGroupArn:
+              Ref: AccountTCP8072TargetGroup
+        Type: forward
+      LoadBalancerArn:
+        Ref: LoadBalancer
+      Port: 8072
+      Protocol: TCP
+    Type: AWS::ElasticLoadBalancingV2::Listener
+  AccountTCP8072TargetGroup:
+    Properties:
+      Port: 8072
+      Protocol: TCP
+      Tags:
+      - Key: com.docker.compose.project
+        Value: devops-mk
+      TargetType: ip
+      VpcId: vpc-00faaa896f084a021
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+  AccountTaskDefinition:
+    Properties:
+      ContainerDefinitions:
+      - Command:
+        - us-east-1.compute.internal
+        - devops-mk.local
+        Essential: false
+        Image: docker/ecs-searchdomain-sidecar:1.0
+        LogConfiguration:
+          LogDriver: awslogs
+          Options:
+            awslogs-group:
+              Ref: LogGroup
+            awslogs-region:
+              Ref: AWS::Region
+            awslogs-stream-prefix: devops-mk
+        Name: Account_ResolvConf_InitContainer
+      - DependsOn:
+        - Condition: SUCCESS
+          ContainerName: Account_ResolvConf_InitContainer
+        Environment:
+        - Name: DB_HOST
+          Value: capstonedb.c4ljl6cisrr3.us-east-1.rds.amazonaws.com
+        - Name: DB_NAME
+          Value: alinedb
+        - Name: DB_PASSWORD
+          Value: password
+        - Name: DB_PORT
+          Value: "3306"
+        - Name: DB_USERNAME
+          Value: admin
+        - Name: ENCRYPT_SECRET_KEY
+          Value: PdSgVkXp2s5v8y/B?E(H+MbQeThWmZq3
+        - Name: JWT_SECRET_KEY
+          Value: 9ef2c67e-a4e2-4e32-b2dd-27b3ed641ac0
+        Essential: true
+        Image: 047032559530.dkr.ecr.us-east-1.amazonaws.com/aline-account-microservice:latest@sha256:42609d106321771fbf2ed7ed0889dd284577d61b988caffecca9f970352828d4
+        LinuxParameters: {}
+        LogConfiguration:
+          LogDriver: awslogs
+          Options:
+            awslogs-group:
+              Ref: LogGroup
+            awslogs-region:
+              Ref: AWS::Region
+            awslogs-stream-prefix: devops-mk
+        Name: account
+        PortMappings:
+        - ContainerPort: 8072
+          HostPort: 8072
+          Protocol: tcp
+      Cpu: "256"
+      ExecutionRoleArn:
+        Ref: AccountTaskExecutionRole
+      Family: devops-mk-account
+      Memory: "512"
+      NetworkMode: awsvpc
+      RequiresCompatibilities:
+      - FARGATE
+    Type: AWS::ECS::TaskDefinition
+  AccountTaskExecutionRole:
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+        - Action:
+          - sts:AssumeRole
+          Condition: {}
+          Effect: Allow
+          Principal:
+            Service: ecs-tasks.amazonaws.com
+        Version: 2012-10-17
+      ManagedPolicyArns:
+      - arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
+      - arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
+      Tags:
+      - Key: com.docker.compose.project
+        Value: devops-mk
+      - Key: com.docker.compose.service
+        Value: account
+    Type: AWS::IAM::Role
+  BankService:
+    DependsOn:
+    - BankTCP8083Listener
+    Properties:
+      Cluster:
+        Fn::GetAtt:
+        - Cluster
+        - Arn
+      DeploymentConfiguration:
+        MaximumPercent: 200
+        MinimumHealthyPercent: 100
+      DeploymentController:
+        Type: ECS
+      DesiredCount: 1
+      LaunchType: FARGATE
+      LoadBalancers:
+      - ContainerName: bank
+        ContainerPort: 8083
+        TargetGroupArn:
+          Ref: BankTCP8083TargetGroup
+      NetworkConfiguration:
+        AwsvpcConfiguration:
+          AssignPublicIp: ENABLED
+          SecurityGroups:
+          - Ref: DefaultNetwork
+          Subnets:
+          - subnet-0de1ea87b455759ff
+          - subnet-0003ec11c58f1dc5b
+          - subnet-07b63c009071899f1
+          - subnet-027f93db3892cbb8f
+          - subnet-0ec8ab1226a85df4e
+          - subnet-009a1917fd1633988
+      PlatformVersion: 1.4.0
+      PropagateTags: SERVICE
+      SchedulingStrategy: REPLICA
+      ServiceRegistries:
+      - RegistryArn:
+          Fn::GetAtt:
+          - BankServiceDiscoveryEntry
+          - Arn
+      Tags:
+      - Key: com.docker.compose.project
+        Value: devops-mk
+      - Key: com.docker.compose.service
+        Value: bank
+      TaskDefinition:
+        Ref: BankTaskDefinition
+    Type: AWS::ECS::Service
+  BankServiceDiscoveryEntry:
+    Properties:
+      Description: '"bank" service discovery entry in Cloud Map'
+      DnsConfig:
+        DnsRecords:
+        - TTL: 60
+          Type: A
+        RoutingPolicy: MULTIVALUE
+      HealthCheckCustomConfig:
+        FailureThreshold: 1
+      Name: bank
+      NamespaceId:
+        Ref: CloudMap
+    Type: AWS::ServiceDiscovery::Service
+  BankTCP8083Listener:
+    Properties:
+      DefaultActions:
+      - ForwardConfig:
+          TargetGroups:
+          - TargetGroupArn:
+              Ref: BankTCP8083TargetGroup
+        Type: forward
+      LoadBalancerArn:
+        Ref: LoadBalancer
+      Port: 8083
+      Protocol: TCP
+    Type: AWS::ElasticLoadBalancingV2::Listener
+  BankTCP8083TargetGroup:
+    Properties:
+      Port: 8083
+      Protocol: TCP
+      Tags:
+      - Key: com.docker.compose.project
+        Value: devops-mk
+      TargetType: ip
+      VpcId: vpc-00faaa896f084a021
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+  BankTaskDefinition:
+    Properties:
+      ContainerDefinitions:
+      - Command:
+        - us-east-1.compute.internal
+        - devops-mk.local
+        Essential: false
+        Image: docker/ecs-searchdomain-sidecar:1.0
+        LogConfiguration:
+          LogDriver: awslogs
+          Options:
+            awslogs-group:
+              Ref: LogGroup
+            awslogs-region:
+              Ref: AWS::Region
+            awslogs-stream-prefix: devops-mk
+        Name: Bank_ResolvConf_InitContainer
+      - DependsOn:
+        - Condition: SUCCESS
+          ContainerName: Bank_ResolvConf_InitContainer
+        Environment:
+        - Name: DB_HOST
+          Value: capstonedb.c4ljl6cisrr3.us-east-1.rds.amazonaws.com
+        - Name: DB_NAME
+          Value: alinedb
+        - Name: DB_PASSWORD
+          Value: password
+        - Name: DB_PORT
+          Value: "3306"
+        - Name: DB_USERNAME
+          Value: admin
+        - Name: ENCRYPT_SECRET_KEY
+          Value: PdSgVkXp2s5v8y/B?E(H+MbQeThWmZq3
+        - Name: JWT_SECRET_KEY
+          Value: 9ef2c67e-a4e2-4e32-b2dd-27b3ed641ac0
+        Essential: true
+        Image: 047032559530.dkr.ecr.us-east-1.amazonaws.com/aline-bank-microservice:latest@sha256:30f9c75d9bb8d7a3f201dc10ca8c2c20e7e08308bc4a8f153f45abc52b6223e1
+        LinuxParameters: {}
+        LogConfiguration:
+          LogDriver: awslogs
+          Options:
+            awslogs-group:
+              Ref: LogGroup
+            awslogs-region:
+              Ref: AWS::Region
+            awslogs-stream-prefix: devops-mk
+        Name: bank
+        PortMappings:
+        - ContainerPort: 8083
+          HostPort: 8083
+          Protocol: tcp
+      Cpu: "256"
+      ExecutionRoleArn:
+        Ref: BankTaskExecutionRole
+      Family: devops-mk-bank
+      Memory: "512"
+      NetworkMode: awsvpc
+      RequiresCompatibilities:
+      - FARGATE
+    Type: AWS::ECS::TaskDefinition
+  BankTaskExecutionRole:
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+        - Action:
+          - sts:AssumeRole
+          Condition: {}
+          Effect: Allow
+          Principal:
+            Service: ecs-tasks.amazonaws.com
+        Version: 2012-10-17
+      ManagedPolicyArns:
+      - arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
+      - arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
+      Tags:
+      - Key: com.docker.compose.project
+        Value: devops-mk
+      - Key: com.docker.compose.service
+        Value: bank
+    Type: AWS::IAM::Role
+  CloudMap:
+    Properties:
+      Description: Service Map for Docker Compose project devops-mk
+      Name: devops-mk.local
+      Vpc: vpc-00faaa896f084a021
+    Type: AWS::ServiceDiscovery::PrivateDnsNamespace
+  Cluster:
+    Properties:
+      ClusterName: devops-mk
+      Tags:
+      - Key: com.docker.compose.project
+        Value: devops-mk
+    Type: AWS::ECS::Cluster
+  Default4000Ingress:
+    Properties:
+      CidrIp: 0.0.0.0/0
+      Description: gateway:4000/tcp on default network
+      FromPort: 4000
+      GroupId:
+        Ref: DefaultNetwork
+      IpProtocol: TCP
+      ToPort: 4000
+    Type: AWS::EC2::SecurityGroupIngress
+  Default8070Ingress:
+    Properties:
+      CidrIp: 0.0.0.0/0
+      Description: user:8070/tcp on default network
+      FromPort: 8070
+      GroupId:
+        Ref: DefaultNetwork
+      IpProtocol: TCP
+      ToPort: 8070
+    Type: AWS::EC2::SecurityGroupIngress
+  Default8071Ingress:
+    Properties:
+      CidrIp: 0.0.0.0/0
+      Description: underwriter:8071/tcp on default network
+      FromPort: 8071
+      GroupId:
+        Ref: DefaultNetwork
+      IpProtocol: TCP
+      ToPort: 8071
+    Type: AWS::EC2::SecurityGroupIngress
+  Default8072Ingress:
+    Properties:
+      CidrIp: 0.0.0.0/0
+      Description: account:8072/tcp on default network
+      FromPort: 8072
+      GroupId:
+        Ref: DefaultNetwork
+      IpProtocol: TCP
+      ToPort: 8072
+    Type: AWS::EC2::SecurityGroupIngress
+  Default8073Ingress:
+    Properties:
+      CidrIp: 0.0.0.0/0
+      Description: transaction:8073/tcp on default network
+      FromPort: 8073
+      GroupId:
+        Ref: DefaultNetwork
+      IpProtocol: TCP
+      ToPort: 8073
+    Type: AWS::EC2::SecurityGroupIngress
+  Default8083Ingress:
+    Properties:
+      CidrIp: 0.0.0.0/0
+      Description: bank:8083/tcp on default network
+      FromPort: 8083
+      GroupId:
+        Ref: DefaultNetwork
+      IpProtocol: TCP
+      ToPort: 8083
+    Type: AWS::EC2::SecurityGroupIngress
+  DefaultNetwork:
+    Properties:
+      GroupDescription: devops-mk Security Group for default network
+      Tags:
+      - Key: com.docker.compose.project
+        Value: devops-mk
+      - Key: com.docker.compose.network
+        Value: devops-mk_default
+      VpcId: vpc-00faaa896f084a021
+    Type: AWS::EC2::SecurityGroup
+  DefaultNetworkIngress:
+    Properties:
+      Description: Allow communication within network default
+      GroupId:
+        Ref: DefaultNetwork
+      IpProtocol: "-1"
+      SourceSecurityGroupId:
+        Ref: DefaultNetwork
+    Type: AWS::EC2::SecurityGroupIngress
+  GatewayService:
+    DependsOn:
+    - GatewayTCP4000Listener
+    Properties:
+      Cluster:
+        Fn::GetAtt:
+        - Cluster
+        - Arn
+      DeploymentConfiguration:
+        MaximumPercent: 200
+        MinimumHealthyPercent: 100
+      DeploymentController:
+        Type: ECS
+      DesiredCount: 1
+      LaunchType: FARGATE
+      LoadBalancers:
+      - ContainerName: gateway
+        ContainerPort: 4000
+        TargetGroupArn:
+          Ref: GatewayTCP4000TargetGroup
+      NetworkConfiguration:
+        AwsvpcConfiguration:
+          AssignPublicIp: ENABLED
+          SecurityGroups:
+          - Ref: DefaultNetwork
+          Subnets:
+          - subnet-0de1ea87b455759ff
+          - subnet-0003ec11c58f1dc5b
+          - subnet-07b63c009071899f1
+          - subnet-027f93db3892cbb8f
+          - subnet-0ec8ab1226a85df4e
+          - subnet-009a1917fd1633988
+      PlatformVersion: 1.4.0
+      PropagateTags: SERVICE
+      SchedulingStrategy: REPLICA
+      ServiceRegistries:
+      - RegistryArn:
+          Fn::GetAtt:
+          - GatewayServiceDiscoveryEntry
+          - Arn
+      Tags:
+      - Key: com.docker.compose.project
+        Value: devops-mk
+      - Key: com.docker.compose.service
+        Value: gateway
+      TaskDefinition:
+        Ref: GatewayTaskDefinition
+    Type: AWS::ECS::Service
+  GatewayServiceDiscoveryEntry:
+    Properties:
+      Description: '"gateway" service discovery entry in Cloud Map'
+      DnsConfig:
+        DnsRecords:
+        - TTL: 60
+          Type: A
+        RoutingPolicy: MULTIVALUE
+      HealthCheckCustomConfig:
+        FailureThreshold: 1
+      Name: gateway
+      NamespaceId:
+        Ref: CloudMap
+    Type: AWS::ServiceDiscovery::Service
+  GatewayTCP4000Listener:
+    Properties:
+      DefaultActions:
+      - ForwardConfig:
+          TargetGroups:
+          - TargetGroupArn:
+              Ref: GatewayTCP4000TargetGroup
+        Type: forward
+      LoadBalancerArn:
+        Ref: LoadBalancer
+      Port: 4000
+      Protocol: TCP
+    Type: AWS::ElasticLoadBalancingV2::Listener
+  GatewayTCP4000TargetGroup:
+    Properties:
+      Port: 4000
+      Protocol: TCP
+      Tags:
+      - Key: com.docker.compose.project
+        Value: devops-mk
+      TargetType: ip
+      VpcId: vpc-00faaa896f084a021
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+  GatewayTaskDefinition:
+    Properties:
+      ContainerDefinitions:
+      - Command:
+        - us-east-1.compute.internal
+        - devops-mk.local
+        Essential: false
+        Image: docker/ecs-searchdomain-sidecar:1.0
+        LogConfiguration:
+          LogDriver: awslogs
+          Options:
+            awslogs-group:
+              Ref: LogGroup
+            awslogs-region:
+              Ref: AWS::Region
+            awslogs-stream-prefix: devops-mk
+        Name: Gateway_ResolvConf_InitContainer
+      - DependsOn:
+        - Condition: SUCCESS
+          ContainerName: Gateway_ResolvConf_InitContainer
+        Environment:
+        - Name: APP_SERVICE_HOST
+          Value: localhost
+        Essential: true
+        Image: 047032559530.dkr.ecr.us-east-1.amazonaws.com/aline-gateway:latest@sha256:2466b9633516fa4f8d63c10e1561668bed7c856e1b45268465abca6156466e81
+        LinuxParameters: {}
+        LogConfiguration:
+          LogDriver: awslogs
+          Options:
+            awslogs-group:
+              Ref: LogGroup
+            awslogs-region:
+              Ref: AWS::Region
+            awslogs-stream-prefix: devops-mk
+        Name: gateway
+        PortMappings:
+        - ContainerPort: 4000
+          HostPort: 4000
+          Protocol: tcp
+      Cpu: "256"
+      ExecutionRoleArn:
+        Ref: GatewayTaskExecutionRole
+      Family: devops-mk-gateway
+      Memory: "512"
+      NetworkMode: awsvpc
+      RequiresCompatibilities:
+      - FARGATE
+    Type: AWS::ECS::TaskDefinition
+  GatewayTaskExecutionRole:
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+        - Action:
+          - sts:AssumeRole
+          Condition: {}
+          Effect: Allow
+          Principal:
+            Service: ecs-tasks.amazonaws.com
+        Version: 2012-10-17
+      ManagedPolicyArns:
+      - arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
+      - arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
+      Tags:
+      - Key: com.docker.compose.project
+        Value: devops-mk
+      - Key: com.docker.compose.service
+        Value: gateway
+    Type: AWS::IAM::Role
+  LoadBalancer:
+    Properties:
+      LoadBalancerAttributes:
+      - Key: load_balancing.cross_zone.enabled
+        Value: "true"
+      Scheme: internet-facing
+      Subnets:
+      - subnet-0de1ea87b455759ff
+      - subnet-0003ec11c58f1dc5b
+      - subnet-07b63c009071899f1
+      - subnet-027f93db3892cbb8f
+      - subnet-0ec8ab1226a85df4e
+      - subnet-009a1917fd1633988
+      Tags:
+      - Key: com.docker.compose.project
+        Value: devops-mk
+      Type: network
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+  LogGroup:
+    Properties:
+      LogGroupName: /docker-compose/devops-mk
+    Type: AWS::Logs::LogGroup
+  TransactionService:
+    DependsOn:
+    - TransactionTCP8073Listener
+    Properties:
+      Cluster:
+        Fn::GetAtt:
+        - Cluster
+        - Arn
+      DeploymentConfiguration:
+        MaximumPercent: 200
+        MinimumHealthyPercent: 100
+      DeploymentController:
+        Type: ECS
+      DesiredCount: 1
+      LaunchType: FARGATE
+      LoadBalancers:
+      - ContainerName: transaction
+        ContainerPort: 8073
+        TargetGroupArn:
+          Ref: TransactionTCP8073TargetGroup
+      NetworkConfiguration:
+        AwsvpcConfiguration:
+          AssignPublicIp: ENABLED
+          SecurityGroups:
+          - Ref: DefaultNetwork
+          Subnets:
+          - subnet-0de1ea87b455759ff
+          - subnet-0003ec11c58f1dc5b
+          - subnet-07b63c009071899f1
+          - subnet-027f93db3892cbb8f
+          - subnet-0ec8ab1226a85df4e
+          - subnet-009a1917fd1633988
+      PlatformVersion: 1.4.0
+      PropagateTags: SERVICE
+      SchedulingStrategy: REPLICA
+      ServiceRegistries:
+      - RegistryArn:
+          Fn::GetAtt:
+          - TransactionServiceDiscoveryEntry
+          - Arn
+      Tags:
+      - Key: com.docker.compose.project
+        Value: devops-mk
+      - Key: com.docker.compose.service
+        Value: transaction
+      TaskDefinition:
+        Ref: TransactionTaskDefinition
+    Type: AWS::ECS::Service
+  TransactionServiceDiscoveryEntry:
+    Properties:
+      Description: '"transaction" service discovery entry in Cloud Map'
+      DnsConfig:
+        DnsRecords:
+        - TTL: 60
+          Type: A
+        RoutingPolicy: MULTIVALUE
+      HealthCheckCustomConfig:
+        FailureThreshold: 1
+      Name: transaction
+      NamespaceId:
+        Ref: CloudMap
+    Type: AWS::ServiceDiscovery::Service
+  TransactionTCP8073Listener:
+    Properties:
+      DefaultActions:
+      - ForwardConfig:
+          TargetGroups:
+          - TargetGroupArn:
+              Ref: TransactionTCP8073TargetGroup
+        Type: forward
+      LoadBalancerArn:
+        Ref: LoadBalancer
+      Port: 8073
+      Protocol: TCP
+    Type: AWS::ElasticLoadBalancingV2::Listener
+  TransactionTCP8073TargetGroup:
+    Properties:
+      Port: 8073
+      Protocol: TCP
+      Tags:
+      - Key: com.docker.compose.project
+        Value: devops-mk
+      TargetType: ip
+      VpcId: vpc-00faaa896f084a021
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+  TransactionTaskDefinition:
+    Properties:
+      ContainerDefinitions:
+      - Command:
+        - us-east-1.compute.internal
+        - devops-mk.local
+        Essential: false
+        Image: docker/ecs-searchdomain-sidecar:1.0
+        LogConfiguration:
+          LogDriver: awslogs
+          Options:
+            awslogs-group:
+              Ref: LogGroup
+            awslogs-region:
+              Ref: AWS::Region
+            awslogs-stream-prefix: devops-mk
+        Name: Transaction_ResolvConf_InitContainer
+      - DependsOn:
+        - Condition: SUCCESS
+          ContainerName: Transaction_ResolvConf_InitContainer
+        Environment:
+        - Name: DB_HOST
+          Value: capstonedb.c4ljl6cisrr3.us-east-1.rds.amazonaws.com
+        - Name: DB_NAME
+          Value: alinedb
+        - Name: DB_PASSWORD
+          Value: password
+        - Name: DB_PORT
+          Value: "3306"
+        - Name: DB_USERNAME
+          Value: admin
+        - Name: ENCRYPT_SECRET_KEY
+          Value: PdSgVkXp2s5v8y/B?E(H+MbQeThWmZq3
+        - Name: JWT_SECRET_KEY
+          Value: 9ef2c67e-a4e2-4e32-b2dd-27b3ed641ac0
+        Essential: true
+        Image: 047032559530.dkr.ecr.us-east-1.amazonaws.com/aline-transaction-microservice:latest@sha256:6cfa9ad0e5bad97338db6ca8bc69aeb9716ef6965d15d421157651b9f6d494ee
+        LinuxParameters: {}
+        LogConfiguration:
+          LogDriver: awslogs
+          Options:
+            awslogs-group:
+              Ref: LogGroup
+            awslogs-region:
+              Ref: AWS::Region
+            awslogs-stream-prefix: devops-mk
+        Name: transaction
+        PortMappings:
+        - ContainerPort: 8073
+          HostPort: 8073
+          Protocol: tcp
+      Cpu: "256"
+      ExecutionRoleArn:
+        Ref: TransactionTaskExecutionRole
+      Family: devops-mk-transaction
+      Memory: "512"
+      NetworkMode: awsvpc
+      RequiresCompatibilities:
+      - FARGATE
+    Type: AWS::ECS::TaskDefinition
+  TransactionTaskExecutionRole:
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+        - Action:
+          - sts:AssumeRole
+          Condition: {}
+          Effect: Allow
+          Principal:
+            Service: ecs-tasks.amazonaws.com
+        Version: 2012-10-17
+      ManagedPolicyArns:
+      - arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
+      - arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
+      Tags:
+      - Key: com.docker.compose.project
+        Value: devops-mk
+      - Key: com.docker.compose.service
+        Value: transaction
+    Type: AWS::IAM::Role
+  UnderwriterService:
+    DependsOn:
+    - UnderwriterTCP8071Listener
+    Properties:
+      Cluster:
+        Fn::GetAtt:
+        - Cluster
+        - Arn
+      DeploymentConfiguration:
+        MaximumPercent: 200
+        MinimumHealthyPercent: 100
+      DeploymentController:
+        Type: ECS
+      DesiredCount: 1
+      LaunchType: FARGATE
+      LoadBalancers:
+      - ContainerName: underwriter
+        ContainerPort: 8071
+        TargetGroupArn:
+          Ref: UnderwriterTCP8071TargetGroup
+      NetworkConfiguration:
+        AwsvpcConfiguration:
+          AssignPublicIp: ENABLED
+          SecurityGroups:
+          - Ref: DefaultNetwork
+          Subnets:
+          - subnet-0de1ea87b455759ff
+          - subnet-0003ec11c58f1dc5b
+          - subnet-07b63c009071899f1
+          - subnet-027f93db3892cbb8f
+          - subnet-0ec8ab1226a85df4e
+          - subnet-009a1917fd1633988
+      PlatformVersion: 1.4.0
+      PropagateTags: SERVICE
+      SchedulingStrategy: REPLICA
+      ServiceRegistries:
+      - RegistryArn:
+          Fn::GetAtt:
+          - UnderwriterServiceDiscoveryEntry
+          - Arn
+      Tags:
+      - Key: com.docker.compose.project
+        Value: devops-mk
+      - Key: com.docker.compose.service
+        Value: underwriter
+      TaskDefinition:
+        Ref: UnderwriterTaskDefinition
+    Type: AWS::ECS::Service
+  UnderwriterServiceDiscoveryEntry:
+    Properties:
+      Description: '"underwriter" service discovery entry in Cloud Map'
+      DnsConfig:
+        DnsRecords:
+        - TTL: 60
+          Type: A
+        RoutingPolicy: MULTIVALUE
+      HealthCheckCustomConfig:
+        FailureThreshold: 1
+      Name: underwriter
+      NamespaceId:
+        Ref: CloudMap
+    Type: AWS::ServiceDiscovery::Service
+  UnderwriterTCP8071Listener:
+    Properties:
+      DefaultActions:
+      - ForwardConfig:
+          TargetGroups:
+          - TargetGroupArn:
+              Ref: UnderwriterTCP8071TargetGroup
+        Type: forward
+      LoadBalancerArn:
+        Ref: LoadBalancer
+      Port: 8071
+      Protocol: TCP
+    Type: AWS::ElasticLoadBalancingV2::Listener
+  UnderwriterTCP8071TargetGroup:
+    Properties:
+      Port: 8071
+      Protocol: TCP
+      Tags:
+      - Key: com.docker.compose.project
+        Value: devops-mk
+      TargetType: ip
+      VpcId: vpc-00faaa896f084a021
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+  UnderwriterTaskDefinition:
+    Properties:
+      ContainerDefinitions:
+      - Command:
+        - us-east-1.compute.internal
+        - devops-mk.local
+        Essential: false
+        Image: docker/ecs-searchdomain-sidecar:1.0
+        LogConfiguration:
+          LogDriver: awslogs
+          Options:
+            awslogs-group:
+              Ref: LogGroup
+            awslogs-region:
+              Ref: AWS::Region
+            awslogs-stream-prefix: devops-mk
+        Name: Underwriter_ResolvConf_InitContainer
+      - DependsOn:
+        - Condition: SUCCESS
+          ContainerName: Underwriter_ResolvConf_InitContainer
+        Environment:
+        - Name: DB_HOST
+          Value: capstonedb.c4ljl6cisrr3.us-east-1.rds.amazonaws.com
+        - Name: DB_NAME
+          Value: alinedb
+        - Name: DB_PASSWORD
+          Value: password
+        - Name: DB_PORT
+          Value: "3306"
+        - Name: DB_USERNAME
+          Value: admin
+        - Name: ENCRYPT_SECRET_KEY
+          Value: PdSgVkXp2s5v8y/B?E(H+MbQeThWmZq3
+        - Name: JWT_SECRET_KEY
+          Value: 9ef2c67e-a4e2-4e32-b2dd-27b3ed641ac0
+        Essential: true
+        Image: 047032559530.dkr.ecr.us-east-1.amazonaws.com/aline-underwriter-microservice:latest@sha256:0c474d62589a1f3cf55ba6f0d8d855e511336723f0a8c908b4fe1b44d1887807
+        LinuxParameters: {}
+        LogConfiguration:
+          LogDriver: awslogs
+          Options:
+            awslogs-group:
+              Ref: LogGroup
+            awslogs-region:
+              Ref: AWS::Region
+            awslogs-stream-prefix: devops-mk
+        Name: underwriter
+        PortMappings:
+        - ContainerPort: 8071
+          HostPort: 8071
+          Protocol: tcp
+      Cpu: "256"
+      ExecutionRoleArn:
+        Ref: UnderwriterTaskExecutionRole
+      Family: devops-mk-underwriter
+      Memory: "512"
+      NetworkMode: awsvpc
+      RequiresCompatibilities:
+      - FARGATE
+    Type: AWS::ECS::TaskDefinition
+  UnderwriterTaskExecutionRole:
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+        - Action:
+          - sts:AssumeRole
+          Condition: {}
+          Effect: Allow
+          Principal:
+            Service: ecs-tasks.amazonaws.com
+        Version: 2012-10-17
+      ManagedPolicyArns:
+      - arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
+      - arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
+      Tags:
+      - Key: com.docker.compose.project
+        Value: devops-mk
+      - Key: com.docker.compose.service
+        Value: underwriter
+    Type: AWS::IAM::Role
+  UserService:
+    DependsOn:
+    - UserTCP8070Listener
+    Properties:
+      Cluster:
+        Fn::GetAtt:
+        - Cluster
+        - Arn
+      DeploymentConfiguration:
+        MaximumPercent: 200
+        MinimumHealthyPercent: 100
+      DeploymentController:
+        Type: ECS
+      DesiredCount: 1
+      LaunchType: FARGATE
+      LoadBalancers:
+      - ContainerName: user
+        ContainerPort: 8070
+        TargetGroupArn:
+          Ref: UserTCP8070TargetGroup
+      NetworkConfiguration:
+        AwsvpcConfiguration:
+          AssignPublicIp: ENABLED
+          SecurityGroups:
+          - Ref: DefaultNetwork
+          Subnets:
+          - subnet-0de1ea87b455759ff
+          - subnet-0003ec11c58f1dc5b
+          - subnet-07b63c009071899f1
+          - subnet-027f93db3892cbb8f
+          - subnet-0ec8ab1226a85df4e
+          - subnet-009a1917fd1633988
+      PlatformVersion: 1.4.0
+      PropagateTags: SERVICE
+      SchedulingStrategy: REPLICA
+      ServiceRegistries:
+      - RegistryArn:
+          Fn::GetAtt:
+          - UserServiceDiscoveryEntry
+          - Arn
+      Tags:
+      - Key: com.docker.compose.project
+        Value: devops-mk
+      - Key: com.docker.compose.service
+        Value: user
+      TaskDefinition:
+        Ref: UserTaskDefinition
+    Type: AWS::ECS::Service
+  UserServiceDiscoveryEntry:
+    Properties:
+      Description: '"user" service discovery entry in Cloud Map'
+      DnsConfig:
+        DnsRecords:
+        - TTL: 60
+          Type: A
+        RoutingPolicy: MULTIVALUE
+      HealthCheckCustomConfig:
+        FailureThreshold: 1
+      Name: user
+      NamespaceId:
+        Ref: CloudMap
+    Type: AWS::ServiceDiscovery::Service
+  UserTCP8070Listener:
+    Properties:
+      DefaultActions:
+      - ForwardConfig:
+          TargetGroups:
+          - TargetGroupArn:
+              Ref: UserTCP8070TargetGroup
+        Type: forward
+      LoadBalancerArn:
+        Ref: LoadBalancer
+      Port: 8070
+      Protocol: TCP
+    Type: AWS::ElasticLoadBalancingV2::Listener
+  UserTCP8070TargetGroup:
+    Properties:
+      Port: 8070
+      Protocol: TCP
+      Tags:
+      - Key: com.docker.compose.project
+        Value: devops-mk
+      TargetType: ip
+      VpcId: vpc-00faaa896f084a021
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+  UserTaskDefinition:
+    Properties:
+      ContainerDefinitions:
+      - Command:
+        - us-east-1.compute.internal
+        - devops-mk.local
+        Essential: false
+        Image: docker/ecs-searchdomain-sidecar:1.0
+        LogConfiguration:
+          LogDriver: awslogs
+          Options:
+            awslogs-group:
+              Ref: LogGroup
+            awslogs-region:
+              Ref: AWS::Region
+            awslogs-stream-prefix: devops-mk
+        Name: User_ResolvConf_InitContainer
+      - DependsOn:
+        - Condition: SUCCESS
+          ContainerName: User_ResolvConf_InitContainer
+        Environment:
+        - Name: DB_HOST
+          Value: capstonedb.c4ljl6cisrr3.us-east-1.rds.amazonaws.com
+        - Name: DB_NAME
+          Value: alinedb
+        - Name: DB_PASSWORD
+          Value: password
+        - Name: DB_PORT
+          Value: "3306"
+        - Name: DB_USERNAME
+          Value: admin
+        - Name: ENCRYPT_SECRET_KEY
+          Value: PdSgVkXp2s5v8y/B?E(H+MbQeThWmZq3
+        - Name: JWT_SECRET_KEY
+          Value: 9ef2c67e-a4e2-4e32-b2dd-27b3ed641ac0
+        Essential: true
+        Image: 047032559530.dkr.ecr.us-east-1.amazonaws.com/aline-user-microservice:latest@sha256:9a8eda5a065e9d2c991aef45d96c3c0babe29205e173a7cf2be4a55e109dda86
+        LinuxParameters: {}
+        LogConfiguration:
+          LogDriver: awslogs
+          Options:
+            awslogs-group:
+              Ref: LogGroup
+            awslogs-region:
+              Ref: AWS::Region
+            awslogs-stream-prefix: devops-mk
+        Name: user
+        PortMappings:
+        - ContainerPort: 8070
+          HostPort: 8070
+          Protocol: tcp
+      Cpu: "256"
+      ExecutionRoleArn:
+        Ref: UserTaskExecutionRole
+      Family: devops-mk-user
+      Memory: "512"
+      NetworkMode: awsvpc
+      RequiresCompatibilities:
+      - FARGATE
+    Type: AWS::ECS::TaskDefinition
+  UserTaskExecutionRole:
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+        - Action:
+          - sts:AssumeRole
+          Condition: {}
+          Effect: Allow
+          Principal:
+            Service: ecs-tasks.amazonaws.com
+        Version: 2012-10-17
+      ManagedPolicyArns:
+      - arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
+      - arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
+      Tags:
+      - Key: com.docker.compose.project
+        Value: devops-mk
+      - Key: com.docker.compose.service
+        Value: user
+    Type: AWS::IAM::Role

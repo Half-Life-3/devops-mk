@@ -1,0 +1,89 @@
+version: "3"
+#x-aws-cluster: capstone-ecs
+x-aws-vpc: "vpc-069b087be2edb55c4"
+x-aws-loadbalancer: ecs-load-balancer
+x-aws-policies:
+  - "arn:aws:iam::aws:policy/AmazonECS_FullAccess"
+  - "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
+  - "arn:aws:iam::aws:policy/aws-service-role/AmazonECSServiceRolePolicy"
+  - arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
+  - arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
+services:
+  gateway:
+    container_name: gateway
+    #image: ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/aline-gateway:latest
+    image: 047032559530.dkr.ecr.us-east-1.amazonaws.com/aline-gateway
+    ports:
+      - "4000:4000"
+    environment:
+      - APP_SERVICE_HOST=${APP_SERVICE_HOST}  
+
+  # user:
+  #   container_name: user
+  #   image: ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/aline-user-microservice:latest
+  #   ports:
+  #     - "8070:8070"
+  #   environment:
+  #     - DB_USERNAME=${DB_USERNAME}
+  #     - DB_PASSWORD=${DB_PASSWORD}
+  #     - DB_HOST=${DB_HOST}
+  #     - DB_PORT=${DB_PORT}
+  #     - DB_NAME=${DB_NAME}
+  #     - ENCRYPT_SECRET_KEY=${ENCRYPT_SECRET_KEY}
+  #     - JWT_SECRET_KEY=${JWT_SECRET_KEY} 
+
+  # underwriter:
+  #   container_name: underwriter
+  #   image: ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/aline-underwriter-microservice:latest
+  #   ports:
+  #     - "8071:8071"
+  #   environment:
+  #     - DB_USERNAME=${DB_USERNAME}
+  #     - DB_PASSWORD=${DB_PASSWORD}
+  #     - DB_HOST=${DB_HOST}
+  #     - DB_PORT=${DB_PORT}
+  #     - DB_NAME=${DB_NAME}
+  #     - ENCRYPT_SECRET_KEY=${ENCRYPT_SECRET_KEY}
+  #     - JWT_SECRET_KEY=${JWT_SECRET_KEY} 
+
+  # account:
+  #   container_name: account
+  #   image: ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/aline-account-microservice:latest
+  #   ports:
+  #     - "8072:8072"
+  #   environment:
+  #     - DB_USERNAME=${DB_USERNAME}
+  #     - DB_PASSWORD=${DB_PASSWORD}
+  #     - DB_HOST=${DB_HOST}
+  #     - DB_PORT=${DB_PORT}
+  #     - DB_NAME=${DB_NAME}
+  #     - ENCRYPT_SECRET_KEY=${ENCRYPT_SECRET_KEY}
+  #     - JWT_SECRET_KEY=${JWT_SECRET_KEY} 
+
+  # transaction:
+  #   container_name: transaction
+  #   image: ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/aline-transaction-microservice:latest
+  #   ports:
+  #     - "8073:8073"
+  #   environment:
+  #     - DB_USERNAME=${DB_USERNAME}
+  #     - DB_PASSWORD=${DB_PASSWORD}
+  #     - DB_HOST=${DB_HOST}
+  #     - DB_PORT=${DB_PORT}
+  #     - DB_NAME=${DB_NAME}
+  #     - ENCRYPT_SECRET_KEY=${ENCRYPT_SECRET_KEY}
+  #     - JWT_SECRET_KEY=${JWT_SECRET_KEY} 
+
+  # bank:
+  #   container_name: bank
+  #   image: ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/aline-bank-microservice:latest
+  #   ports:
+  #     - "8083:8083"
+  #   environment:
+  #     - DB_USERNAME=${DB_USERNAME}
+  #     - DB_PASSWORD=${DB_PASSWORD}
+  #     - DB_HOST=${DB_HOST}
+  #     - DB_PORT=${DB_PORT}
+  #     - DB_NAME=${DB_NAME}
+  #     - ENCRYPT_SECRET_KEY=${ENCRYPT_SECRET_KEY}
+  #     - JWT_SECRET_KEY=${JWT_SECRET_KEY} 

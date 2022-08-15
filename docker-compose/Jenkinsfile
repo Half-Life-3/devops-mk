@@ -1,0 +1,26 @@
+pipeline{
+    agent any
+    stages{
+        stage('AWS docker login'){
+            aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 047032559530.dkr.ecr.us-east-1.amazonaws.com
+        }
+        stage('Use Context'){
+            sh 'docker context use capstone_ecs'
+        }
+        stage('AWS Login') {
+			steps{
+                sh './aws_login.sh'
+				}
+			}
+        stage('Apply yaml'){
+            steps{
+                sh "docker compose -f docker-compose.yaml -p capstone_ecs up"
+            }
+        }
+        stage('Apply yaml'){
+            steps{
+                sh "docker context use default"
+            }
+        }
+    }
+}
