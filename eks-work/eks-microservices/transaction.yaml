@@ -1,0 +1,37 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: transaction-service
+spec:
+  selector:
+    app: transaction
+  ports:
+  - protocol: TCP
+    port: 8073
+    targetPort: 8073
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: transaction
+  labels:
+    app: transaction
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: transaction
+  template:
+    metadata:
+      labels:
+        app: transaction
+    spec:
+      containers:
+        - name: transaction-ms
+          image: 047032559530.dkr.ecr.us-east-1.amazonaws.com/aline-transaction-microservice:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8073
+          envFrom:
+          - secretRef:
+              name: microservices-secret

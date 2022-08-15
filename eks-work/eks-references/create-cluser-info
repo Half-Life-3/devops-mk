@@ -1,0 +1,9 @@
+aws eks create-cluster \
+   --region us-east-1 \
+   --name kind-control-plane \
+   --kubernetes-version 1.22 \
+   --role-arn arn:aws:iam::aws:policy/AmazonEKSClusterPolicy \
+   --resources-vpc-config subnetIds=subnet-0eb1e17d03bc81d37,subnet-0c7f997f2ee8a90aa,subnet-05a34f135042c7f81,subnet-07d33e285b09411ee,securityGroupIds=sg-023e910e85174f72a
+
+
+   arn:aws:iam::aws:policy/AmazonEKSClusterPolicy

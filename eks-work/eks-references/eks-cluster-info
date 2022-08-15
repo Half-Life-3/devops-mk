@@ -1,0 +1,60 @@
+# michael@ubuntu-xenial:~$ aws eks create-cluster \
+# >    --region us-east-1 \
+# >    --name kind-control-plane \
+# >    --kubernetes-version 1.22 \
+# >    --role-arn arn:aws:iam::047032559530:role/eks-permissions-policy \
+# >    --resources-vpc-config subnetIds=subnet-0eb1e17d03bc81d37,subnet-0c7f997f2ee8a90aa,subnet-05a34f135042c7f81,subnet-07d33e285b09411ee,securityGroupIds=sg-023e910e85174f72a
+cluster:
+  arn: arn:aws:eks:us-east-1:047032559530:cluster/kind-control-plane
+  certificateAuthority: {}
+  createdAt: '2022-06-12T17:45:32.890000+00:00'
+  kubernetesNetworkConfig:
+    ipFamily: ipv4
+    serviceIpv4Cidr: 10.100.0.0/16
+  logging:
+    clusterLogging:
+    - enabled: false
+      types:
+      - api
+      - audit
+      - authenticator
+      - controllerManager
+      - scheduler
+  name: kind-control-plane
+  platformVersion: eks.2
+:...skipping...
+cluster:
+  arn: arn:aws:eks:us-east-1:047032559530:cluster/kind-control-plane
+  certificateAuthority: {}
+  createdAt: '2022-06-12T17:45:32.890000+00:00'
+  kubernetesNetworkConfig:
+    ipFamily: ipv4
+    serviceIpv4Cidr: 10.100.0.0/16
+  logging:
+    clusterLogging:
+    - enabled: false
+      types:
+      - api
+      - audit
+      - authenticator
+      - controllerManager
+      - scheduler
+  name: kind-control-plane
+  platformVersion: eks.2
+  resourcesVpcConfig:
+    endpointPrivateAccess: false
+    endpointPublicAccess: true
+    publicAccessCidrs:
+    - 0.0.0.0/0
+    securityGroupIds:
+    - sg-023e910e85174f72a
+    subnetIds:
+    - subnet-0eb1e17d03bc81d37
+    - subnet-0c7f997f2ee8a90aa
+    - subnet-05a34f135042c7f81
+    - subnet-07d33e285b09411ee
+    vpcId: vpc-027d862d39fc32767
+  roleArn: arn:aws:iam::047032559530:role/eks-permissions-policy
+  status: CREATING
+  tags: {}
+  version: '1.22'

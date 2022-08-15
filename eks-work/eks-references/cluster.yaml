@@ -1,0 +1,14 @@
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+
+metadata:
+  name: eks-cluster
+  region: us-east-1
+
+nodeGroups:
+  - name: control-plane-node
+    instanceType: t2.micro
+    desiredCapacity: 2
+    privateNetworking: false
+    ssh:
+      allow: true

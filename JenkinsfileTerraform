@@ -1,0 +1,38 @@
+pipeline {
+  agent any
+  stages {
+    stage('AWS Login') {
+        steps{
+            sh './aws_login.sh'
+        }
+    }
+    stage('Terraform init'){
+        sh 'cd terraform'
+        sh 'terraform init'
+    }
+    stage('Plan') {
+      steps {
+        script{
+            try{
+                sh(script: 'terraform plan -out {PLAN_FILE}.tfplan')
+            }
+            catch(all){
+                sh(script: 'terraform plan')
+            }
+        }
+      }
+    }
+    stage('Apply') {
+      steps {
+        script {
+            try{
+                sh(script: 'terraform apply -out {PLAN_FILE}.tfplan')
+            }
+            catch{
+                sh(script: 'terraform apply')
+            }
+        }
+      }
+    }
+  }
+}

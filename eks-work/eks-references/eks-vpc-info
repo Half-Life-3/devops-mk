@@ -1,0 +1,16 @@
+SecurityGroups	sg-023e910e85174f72a	Security group for the cluster control plane communication with worker nodes	-
+SubnetIds	subnet-0eb1e17d03bc81d37,subnet-0c7f997f2ee8a90aa,subnet-05a34f135042c7f81,subnet-07d33e285b09411ee	Subnets IDs in the VPC	-
+VpcId	vpc-027d862d39fc32767	The VPC Id
+
+is a IPv4 VPC
+
+
+role name = AWSServiceRoleForAmazonEKS
+
+
+Following required service principals [eks.amazonaws.com] were not found in the trust
+ relationships of clusterRole arn:aws:iam::047032559530:role/eks-permissions-policy
+
+
+ Following required service principals [eks.amazonaws.com] were not found in the trust
+  relationships of clusterRole arn:aws:iam::047032559530:role/eks-permissions-policy
