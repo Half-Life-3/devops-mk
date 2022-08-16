@@ -14,7 +14,7 @@ pipeline{
 			}
         stage('Apply yaml'){
             steps{
-                sh "docker compose -f docker-compose.yaml -p capstone_ecs up"
+                sh "docker compose -f docker-compose-${SERVICE_TO_UPDATE}.yaml -p capstone_ecs up"
             }
         }
         stage('Apply yaml'){
