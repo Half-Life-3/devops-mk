@@ -1,6 +1,6 @@
 version: "3"
-#x-aws-cluster: capstone-ecs
-#x-aws-vpc: "vpc-069b087be2edb55c4"
+# x-aws-cluster: capstone-ecs
+# x-aws-vpc: "vpc-069b087be2edb55c4"
 # x-aws-loadbalancer: ecs-load-balancer
 # x-aws-policies:
 #   - "arn:aws:iam::aws:policy/AmazonECS_FullAccess"
@@ -9,7 +9,8 @@ version: "3"
 #   - arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
 #   - arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
 #StackId: arn:aws:cloudformation:us-east-1:047032559530:stack/cloud-formation-template-stack/21eb67e0-1cfe-11ed-90b2-128fd5a7f8f1
-
+#GatewayService TaskFailedToStart: ResourceInitializationError: unable to pull secrets or registry auth: execution resource retrieval failed: unable to retrieve ecr registry auth: service call has been retried 3 time(s): RequestError: send request failed caused by: Post https://api.ecr.us-east-1.amazonaws.com/: dial tcp 52.94.230.108:443: i/o timeout
+#this error possibly means needs a nat gateway
 services:
   # gateway:
   #   container_name: gateway
