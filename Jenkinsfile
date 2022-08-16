@@ -18,10 +18,10 @@ pipeline{
 			}
         stage('Apply yaml'){
             steps{
-                sh "docker compose -f docker-compose/docker-compose-${SERVICE_TO_UPDATE}.yaml -p capstone_ecs up"
+                sh "docker compose -f docker-compose/docker-compose-${SERVICE_TO_UPDATE}.yaml -p capstone-ecs up"
             }
         }
-        stage('switch bacn context'){
+        stage('switch back context'){
             steps{
                 sh "docker context use default"
             }
