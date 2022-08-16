@@ -2,10 +2,14 @@ pipeline{
     agent any
     stages{
         stage('AWS docker login'){
-            aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 047032559530.dkr.ecr.us-east-1.amazonaws.com
+            steps{
+            sh 'aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 047032559530.dkr.ecr.us-east-1.amazonaws.com'
+            }
         }
         stage('Use Context'){
-            sh 'docker context use capstone_ecs'
+            steps{
+                sh 'docker context use capstone_ecs'
+            }
         }
         stage('AWS Login') {
 			steps{
@@ -17,7 +21,7 @@ pipeline{
                 sh "docker compose -f docker-compose/docker-compose-${SERVICE_TO_UPDATE}.yaml -p capstone_ecs up"
             }
         }
-        stage('Apply yaml'){
+        stage('switch bacn context'){
             steps{
                 sh "docker context use default"
             }
