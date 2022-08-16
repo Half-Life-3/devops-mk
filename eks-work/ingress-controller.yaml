@@ -55,76 +55,76 @@ spec:
               port:
                 number: 8070
     #simulate underwriter gateway directions
-    #     - path: /applicants
-    #       pathType: Prefix
-    #       backend:
-    #         service:
-    #           name: underwriter-service
-    #           port:
-    #             number: 8071
-    #     - path: /applications
-    #       pathType: Prefix
-    #       backend:
-    #         service:
-    #           name: underwriter-service
-    #           port:
-    #             number: 8071
-    # #simulate account gateway directions
-    #     - path: /accounts
-    #       pathType: Prefix
-    #       backend:
-    #         service:
-    #           name: account-service
-    #           port:
-    #             number: 8072
-    #     - path: /members
-    #       pathType: Prefix
-    #       backend:
-    #         service:
-    #           name: account-service
-    #           port:
-    #             number: 8072
-    # #simulate transaction gateway directions
-    #     - path: /transactions
-    #       pathType: Prefix
-    #       backend:
-    #         service:
-    #           name: transaction-service
-    #           port:
-    #             number: 8073
-    #     - path: /members
-    #       pathType: Prefix
-    #       backend:
-    #         service:
-    #           name: transaction-service
-    #           port:
-    #             number: 8073
-    #     - path: /accounts
-    #       pathType: Prefix
-    #       backend:
-    #         service:
-    #           name: transaction-service
-    #           port:
-    #             number: 8073
-    # #simulate bank gateway directions
-    #     - path: /members
-    #       pathType: Prefix
-    #       backend:
-    #         service:
-    #           name: bank-service
-    #           port:
-    #             number: 8083
-    #     - path: /branches
-    #       pathType: Prefix
-    #       backend:
-    #         service:
-    #           name: bank-service
-    #           port:
-    #             number: 8083
-    #     - path: /banks
-    #       pathType: Prefix
-    #       backend:
-    #         service:
-    #           name: bank-service
-    #           port:
-    #             number: 8083              
+        - path: /applicants
+          pathType: Prefix
+          backend:
+            service:
+              name: underwriter-service
+              port:
+                number: 8071
+        - path: /applications
+          pathType: Prefix
+          backend:
+            service:
+              name: underwriter-service
+              port:
+                number: 8071
+    #simulate account gateway directions
+        - path: /accounts
+          pathType: Prefix
+          backend:
+            service:
+              name: account-service
+              port:
+                number: 8072
+        - path: /members
+          pathType: Prefix
+          backend:
+            service:
+              name: account-service
+              port:
+                number: 8072
+    #simulate transaction gateway directions
+        - path: /transactions
+          pathType: Prefix
+          backend:
+            service:
+              name: transaction-service
+              port:
+                number: 8073
+        - path: /members
+          pathType: Prefix
+          backend:
+            service:
+              name: transaction-service
+              port:
+                number: 8073
+        - path: /accounts
+          pathType: Prefix
+          backend:
+            service:
+              name: transaction-service
+              port:
+                number: 8073
+    #simulate bank gateway directions
+        - path: /members
+          pathType: Prefix
+          backend:
+            service:
+              name: bank-service
+              port:
+                number: 8083
+        - path: /branches
+          pathType: Prefix
+          backend:
+            service:
+              name: bank-service
+              port:
+                number: 8083
+        - path: /banks
+          pathType: Prefix
+          backend:
+            service:
+              name: bank-service
+              port:
+                number: 8083              
