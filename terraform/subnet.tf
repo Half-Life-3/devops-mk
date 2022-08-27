@@ -40,3 +40,14 @@ resource "aws_subnet" "private_subnet2" {
     Name = "ecs_private_subnet2"
   }
 }
+
+
+resource "aws_nat_gateway" "private_nat_gateway" {
+  connectivity_type = "private"
+  subnet_id         = aws_subnet.private_subnet[0].id
+}
+
+resource "aws_nat_gateway" "private_nat_gateway2" {
+  connectivity_type = "private"
+  subnet_id         = aws_subnet.private_subnet2[0].id
+}

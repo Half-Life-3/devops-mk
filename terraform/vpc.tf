@@ -6,6 +6,6 @@ resource "aws_vpc" "ecs_vpc" {
   cidr_block = var.vpc_cidr_block
   enable_dns_support = true
   tags = {
-    Name = "vpc-05add10567d6d4bb4"
+    Name = "new_terraform_vpc"
   }
 }
