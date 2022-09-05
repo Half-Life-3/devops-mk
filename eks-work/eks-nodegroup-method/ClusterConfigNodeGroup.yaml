@@ -1,0 +1,40 @@
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+metadata:
+  name: myeks-nodegroup
+  region: us-east-1
+  version: "1.22"
+managedNodeGroups:
+- name: mng-group
+  amiFamily: AmazonLinux2
+  labels: {role: mngworkers}
+  minSize: 1
+  maxSize: 3
+  desiredCapacity: 1
+  privateNetworking: false
+  # launchTemplate:
+  #   id: lt-1
+  #   version: "1"
+  iam:
+    attachPolicyARNs:
+    - arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy
+    - arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy
+    - arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
+    - arn:aws:iam::aws:policy/ElasticLoadBalancingFullAccess
+    - arn:aws:iam::047032559530:policy/AWSLoadBalancerControllerIAMPolicy
+    - arn:aws:iam::aws:policy/AdministratorAccess
+    withAddonPolicies:
+      imageBuilder: true
+      autoScaler: true
+      ebs: false
+      fsx: false
+      efs: false
+      awsLoadBalancerController: true
+      albIngress: true
+      cloudWatch: true
+      externalDNS: false
+cloudWatch:
+  clusterLogging:
+    enableTypes: ["*"]
+    logRetentionInDays: 7
+availabilityZones: ['us-east-1a','us-east-1b','us-east-1c','us-east-1d']
