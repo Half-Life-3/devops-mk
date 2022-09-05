@@ -15,9 +15,8 @@ pipeline{
                         StateValue = sh(returnStdout: true, script: "aws cloudwatch describe-alarms --alarm-names Bank_Overload | grep StateValue: | grep -E -o [^StateValue:] | tr -d '\n'")
                         minNodes = 1 // make these env variables later
                         MaxNodes = 3
-                        echo $MaxNodes
                         //currentNodeAmt = sh(returnStdout: true, script: "kubectl describe nodes | grep -c mng-group")
-                        //sh 'kubectl desribe nodes'
+                        sh 'kubectl describe nodes'
                         //currentNodeAmt = currentNodeAmt / 2
                         //echo $currentNodeAmt
                         if(StateValue.trim().equals("ALARM")){
