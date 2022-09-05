@@ -1,0 +1,34 @@
+//this pipeline is designed to run every 2 minutes
+pipeline{
+    agent any
+    stages{
+        stage('AWS Login') {
+			steps{
+                sh(returnStdout: true, script:'../.././aws_login.sh')
+			}
+		}
+        stage('Check CloudWatch'){
+            script{
+            
+            try{
+                // Possible value are OK, ALARM and INSUFFICIENT_DATA
+                StateValue = sh(returnStdout: true, script: "aws cloudwatch describe-alarms --alarm-names Bank_Overload | grep StateValue: | grep -E -o [^StateValue:] | tr -d '\n'")
+                if(StateValue.trim().equals("ALARM"))
+                    //scale group
+                    echo "StateValue is ALARM scaling node group cluster"
+                }
+                else if(StateValue.trim().equals("INSUFFICIENT_DATA")){
+                    // INSUFFICIENT_DATA look more closely at cluster
+                    echo "StateValue is INSUFFICIENT_DATA look more closely at cluster"
+                }
+                else{
+                    // StateValue is OK nothing to do
+                    echo "StateValue is OK nothing to do"
+                }
+            }
+            catch(all){
+                error "could not describe cloud watch alarm Bank_Overload"
+            }
+        }
+    }
+}
