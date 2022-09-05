@@ -26,7 +26,7 @@ pipeline{
                                 sh "eksctl scale nodegroup --cluster=myeks-nodegroup --nodes=$newNodeAmt --name=mng-group"
                             }
                             else{
-                                echo "MaxNodes already allotted can not scale node group any more"
+                                echo "MaxNodes already allotted can not scale node group up any more"
                             }
                         }
                         else if(StateValue.trim().equals("INSUFFICIENT_DATA")){
@@ -36,6 +36,13 @@ pipeline{
                         else{
                             // StateValue is OK nothing to do
                             echo "StateValue is OK"
+                            if(currentNodeAmt > MaxNodes){
+                                newNodeAmt = currentNodeAmt - 1
+                                sh "eksctl scale nodegroup --cluster=myeks-nodegroup --nodes=$newNodeAmt --name=mng-group"
+                            }
+                            else{
+                                echo "minNodes already allotted can not scale node group down any more"
+                            }
                         }
                     }
                     catch(all){
