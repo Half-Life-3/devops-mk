@@ -33,6 +33,47 @@ spec:
           - containerPort: 8083
         envFrom:
         - secretRef:
-            name: microservices-secret 
+            name: microservices-secret
+        # env:
+        #   - name: APP_SERVICE_HOST
+        #     value: ${APP_SERVICE_HOST}
+        #   - name: AWS_ACCOUNT_ID
+        #     value: ${AWS_ACCOUNT_ID}
+        #   - name: AWS_DEFAULT_REGION
+        #     value: ${AWS_DEFAULT_REGION}
+        #   - name: DB_HOST
+        #     value: ${DB_HOST}
+        #   - name: DB_NAME
+        #     value: ${DB_NAME}
+        #   - name: DB_PASSWORD
+        #     value: ${DB_PASSWORD}
+        #   - name: DB_PORT
+        #     value: ${DB_PORT}
+        #   - name: DB_USERNAME
+        #     value: ${DB_USERNAME}
+        #   - name: ENCRYPT_SECRET_KEY
+        #     value: ${ENCRYPT_SECRET_KEY}
+        #   - name: JWT_SECRET_KEY
+        #     value: "9ef2c67e-a4e2-4e32-b2dd-27b3ed641ac0"
+          # - name: APP_SERVICE_HOST
+          #   value: "localhost"
+          # - name: AWS_ACCOUNT_ID
+          #   value: "047032559530"
+          # - name: AWS_DEFAULT_REGION
+          #   value: "us-east-1"
+          # - name: DB_HOST
+          #   value: $(DB_HOST)
+          # - name: "database-hl3.cxddvnyb1guo.us-east-1.rds.amazonaws.com"
+          #   value: "alinedb"
+          # - name: DB_PASSWORD
+          #   value: "Half-Life-3"
+          # - name: DB_PORT
+          #   value: "3306"
+          # - name: DB_USERNAME
+          #   value: "hl3"
+          # - name: ENCRYPT_SECRET_KEY
+          #   value: "V2OHkvQj9FKEgrTWJRZVRoV21acTM="
+          # - name: JWT_SECRET_KEY
+          #   value: "9ef2c67e-a4e2-4e32-b2dd-27b3ed641ac0"
         resources: {}
 status: {}

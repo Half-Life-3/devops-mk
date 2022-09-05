@@ -1,0 +1,23 @@
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+metadata:
+  name: eks-fargate
+  region: us-east-1
+fargateProfiles:
+  - name: fp-default
+    selectors:
+      - namespace: default
+      - namespace: kube-system
+  - name: fp-dev
+    selectors:
+      - namespace: dev
+        labels:
+          env: dev
+          checks: passed
+cloudWatch:
+  clusterLogging:
+    enableTypes: ["*"]
+    logRetentionInDays: 7
+secretsEncryption:
+  keyARN: arn:aws:kms:us-east-1:047032559530:key/578ea266-19f5-43c7-8d50-bcafd3433e63
+availabilityZones: ['us-east-1a','us-east-1b','us-east-1c','us-east-1d']
