@@ -1,4 +1,4 @@
-//this pipeline is designed to run every 2 minutes
+//this pipeline is designed to run every 3 minutes
 pipeline{
     agent any
     stages{
@@ -17,9 +17,7 @@ pipeline{
                         MaxNodes = 3
                         currentNodeAmt = sh(returnStdout: true, script: "kubectl describe nodes | grep -c mng-group")
                         currentNodeAmt = currentNodeAmt.trim().toInteger() / 2
-                        //echo $currentNodeAmt
                         if(StateValue.trim().equals("ALARM")){
-                            //scale group
                             echo "StateValue is ALARM scaling up node group"
                             if(currentNodeAmt < MaxNodes){
                                 newNodeAmt = currentNodeAmt + 1
@@ -30,11 +28,9 @@ pipeline{
                             }
                         }
                         else if(StateValue.trim().equals("INSUFFICIENT_DATA")){
-                            // INSUFFICIENT_DATA look more closely at cluster
                             echo "StateValue is INSUFFICIENT_DATA look more closely at cluster"
                         }
                         else{
-                            // StateValue is OK nothing to do
                             echo "StateValue is OK"
                             if(currentNodeAmt > minNodes){
                                 newNodeAmt = currentNodeAmt - 1
