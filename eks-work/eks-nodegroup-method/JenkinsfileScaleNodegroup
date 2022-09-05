@@ -4,8 +4,8 @@ pipeline{
     stages{
         stage('AWS Login') {
 			steps{
-                sh '../../ls'
-                sh(returnStdout: true, script:'../.././aws_login.sh')
+                sh 'cd ../../.; ls'
+                sh(returnStdout: true, script:'sh ../.././aws_login.sh')
 			}
 		}
         stage('Check CloudWatch'){
