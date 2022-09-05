@@ -4,7 +4,7 @@ pipeline{
     stages{
         stage('AWS Login') {
 			steps{
-                sh 'cd ..; ls'
+                sh 'ls'
                 sh(returnStdout: true, script:'sh ../aws_login.sh')
 			}
 		}
