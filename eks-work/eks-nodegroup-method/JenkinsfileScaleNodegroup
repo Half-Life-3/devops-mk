@@ -36,7 +36,7 @@ pipeline{
                         else{
                             // StateValue is OK nothing to do
                             echo "StateValue is OK"
-                            if(currentNodeAmt > MaxNodes){
+                            if(currentNodeAmt > minNodes){
                                 newNodeAmt = currentNodeAmt - 1
                                 sh "eksctl scale nodegroup --cluster=myeks-nodegroup --nodes=$newNodeAmt --name=mng-group"
                             }
