@@ -23,7 +23,7 @@ pipeline{
                             echo "StateValue is ALARM scaling up node group"
                             if(currentNodeAmt < MaxNodes){
                                 newNodeAmt = currentNodeAmt + 1
-                                sh 'eksctl scale nodegroup --cluster=myeks-nodegroup --nodes=$newNodeAmt --name=mng-group'
+                                sh "eksctl scale nodegroup --cluster=myeks-nodegroup --nodes=$newNodeAmt --name=mng-group"
                             }
                             else{
                                 echo "MaxNodes already allotted can not scale node group any more"
