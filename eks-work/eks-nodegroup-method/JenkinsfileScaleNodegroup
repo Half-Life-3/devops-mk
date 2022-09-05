@@ -1,11 +1,10 @@
-//this pipeline is designed to run every 2 minutes
+//this pipeline is designed to run every 3 minutes
 pipeline{
     agent any
     stages{
         stage('AWS Login') {
 			steps{
-                sh 'cd ..; ls'
-                sh(returnStdout: true, script:'sh ../aws_login.sh')
+                sh(returnStdout: true, script:'sh aws_login.sh')
 			}
 		}
         stage('Check CloudWatch'){
@@ -14,17 +13,32 @@ pipeline{
                     try{
                         // Possible value are OK, ALARM and INSUFFICIENT_DATA
                         StateValue = sh(returnStdout: true, script: "aws cloudwatch describe-alarms --alarm-names Bank_Overload | grep StateValue: | grep -E -o [^StateValue:] | tr -d '\n'")
+                        minNodes = 1 // make these env variables later
+                        MaxNodes = 3
+                        currentNodeAmt = sh(returnStdout: true, script: "kubectl describe nodes | grep -c mng-group")
+                        currentNodeAmt = currentNodeAmt.trim().toInteger() / 2
                         if(StateValue.trim().equals("ALARM")){
-                            //scale group
-                            echo "StateValue is ALARM scaling node group cluster"
+                            echo "StateValue is ALARM scaling up node group"
+                            if(currentNodeAmt < MaxNodes){
+                                newNodeAmt = currentNodeAmt + 1
+                                sh "eksctl scale nodegroup --cluster=myeks-nodegroup --nodes=$newNodeAmt --name=mng-group"
+                            }
+                            else{
+                                echo "MaxNodes already allotted can not scale node group up any more"
+                            }
                         }
                         else if(StateValue.trim().equals("INSUFFICIENT_DATA")){
-                            // INSUFFICIENT_DATA look more closely at cluster
                             echo "StateValue is INSUFFICIENT_DATA look more closely at cluster"
                         }
                         else{
-                            // StateValue is OK nothing to do
-                            echo "StateValue is OK nothing to do"
+                            echo "StateValue is OK"
+                            if(currentNodeAmt > minNodes){
+                                newNodeAmt = currentNodeAmt - 1
+                                sh "eksctl scale nodegroup --cluster=myeks-nodegroup --nodes=$newNodeAmt --name=mng-group"
+                            }
+                            else{
+                                echo "minNodes already allotted can not scale node group down any more"
+                            }
                         }
                     }
                     catch(all){
