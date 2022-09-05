@@ -17,6 +17,7 @@ pipeline{
                         MaxNodes = 3
                         currentNodeAmt = sh (returnStdout: true, script: "kubectl describe nodes | grep -c mng-group")
                         currentNodeAmt = currentNodeAmt / 2
+                        echo $currentNodeAmt
                         if(StateValue.trim().equals("ALARM")){
                             //scale group
                             echo "StateValue is ALARM scaling up node group"
