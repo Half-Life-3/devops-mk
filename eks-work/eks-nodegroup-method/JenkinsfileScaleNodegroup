@@ -16,19 +16,20 @@ pipeline{
                         minNodes = 1 // make these env variables later
                         MaxNodes = 3
                         echo $MaxNodes
-                        currentNodeAmt = sh (returnStdout: true, script: "kubectl describe nodes | grep -c mng-group")
-                        currentNodeAmt = currentNodeAmt / 2
+                        //currentNodeAmt = sh(returnStdout: true, script: "kubectl describe nodes | grep -c mng-group")
+                        sh 'kubectl desribe nodes'
+                        //currentNodeAmt = currentNodeAmt / 2
                         echo $currentNodeAmt
                         if(StateValue.trim().equals("ALARM")){
                             //scale group
                             echo "StateValue is ALARM scaling up node group"
-                            if(currentNodeAmt < MaxNodes){
-                                newNodeAmt = currentNodeAmt + 1
-                                sh 'eksctl scale nodegroup --cluster=myeks-nodegroup --nodes=$newNodeAmt --name=mng-group'
-                            }
-                            else{
-                                echo "MaxNodes already allotted can not scale node group any more"
-                            }
+                            // if(currentNodeAmt < MaxNodes){
+                            //     newNodeAmt = currentNodeAmt + 1
+                            //     sh 'eksctl scale nodegroup --cluster=myeks-nodegroup --nodes=$newNodeAmt --name=mng-group'
+                            // }
+                            // else{
+                            //     echo "MaxNodes already allotted can not scale node group any more"
+                            // }
                         }
                         else if(StateValue.trim().equals("INSUFFICIENT_DATA")){
                             // INSUFFICIENT_DATA look more closely at cluster
