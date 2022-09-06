@@ -20,7 +20,7 @@ helm upgrade -i aws-load-balancer-controller eks/aws-load-balancer-controller \
      --set serviceAccount.create=false \
      --set region=us-east-1 \
      --set vpcId=$eksVPC \
-     --set serviceAccount.name=aws-load-balancer-controller2 \
+     --set serviceAccount.name=aws-load-balancer-controller \
      -n kube-system
 
 kubectl -n kube-system rollout status deployment aws-load-balancer-controller
