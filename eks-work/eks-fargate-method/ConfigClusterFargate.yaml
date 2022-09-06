@@ -3,6 +3,7 @@ kind: ClusterConfig
 metadata:
   name: eks-fargate
   region: us-east-1
+  version: "1.22"
 fargateProfiles:
   - name: fp-default
     selectors:

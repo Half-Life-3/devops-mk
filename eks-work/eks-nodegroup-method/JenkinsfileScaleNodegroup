@@ -7,6 +7,11 @@ pipeline{
                 sh(returnStdout: true, script:'sh aws_login.sh')
 			}
 		}
+        stage('Set Context') {
+			steps{
+                sh(returnStdout: true, script:'kubectl config use-context arn:aws:eks:us-east-1:047032559530:cluster/myeks-nodegroup')
+			}
+		}
         stage('Check CloudWatch'){
             steps{
                 script{
