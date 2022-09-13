@@ -45,7 +45,6 @@ pipeline {
         // sh 'go mod init test'
         // sh 'go mod tidy'
         script {
-          grep -ow ok
           output = sh(script: 'cd terraform/test/ ; go test -v -timeout 10m', returnStdout: true).trim()
           println output
         }
