@@ -32,7 +32,7 @@ pipeline {
     }
     stage('Terraform init'){
       steps{
-        sh 'cd terraform/deployment; ls -a'
+        sh 'cd terraform/deployment; terraform init -backend-config=backend.hcl'
       }
     }
     // stage('Tflint'){
@@ -45,7 +45,7 @@ pipeline {
         // sh 'go mod init test'
         // sh 'go mod tidy'
         script {
-          output = sh(script: 'cd terraform/test/; go mod tidy; go test -v -timeout 10m', returnStdout: true).trim()
+          output = sh(script: 'cd terraform/test/; go test -v -timeout 10m', returnStdout: true).trim()
           println(output)
         }
       }
