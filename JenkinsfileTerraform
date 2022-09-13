@@ -54,10 +54,10 @@ pipeline {
       steps {
         script{
             try{
-                sh(script: 'cd terraform; terraform plan -out ${PLAN_FILE}.tfplan')
+                sh(script: 'cd terraform/deployment; terraform plan -out ${PLAN_FILE}.tfplan')
             }
             catch(all){
-                sh(script: 'terraform plan')
+                sh(script: 'cd terraform/deployment; terraform plan')
             }
         }
       }
@@ -66,10 +66,10 @@ pipeline {
       steps {
         script {
             try{
-                sh(script: 'cd terraform; terraform apply -auto-approve ${PLAN_FILE}.tfplan')
+                sh(script: 'cd terraform/deployment; terraform apply -auto-approve ${PLAN_FILE}.tfplan')
             }
             catch(all){
-                sh(script: 'terraform apply')
+                sh(script: 'cd terraform/deployment; terraform apply')
             }
         }
       }
