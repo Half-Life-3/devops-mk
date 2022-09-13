@@ -45,7 +45,8 @@ pipeline {
         // sh 'go mod init test'
         // sh 'go mod tidy'
         script {
-          output = sh(script: 'cd terraform/test/ ; go test -v -timeout 10m', returnStdout: true).trim()
+          output = sh(script: 'cd terraform/test/ ; go mod init https://github.com/Half-Life-3/devops-mk.git;
+          go mod tidy; go test -v -timeout 10m', returnStdout: true).trim()
           println output
         }
       }
