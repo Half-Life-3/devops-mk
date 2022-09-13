@@ -32,10 +32,7 @@ pipeline {
     }
     stage('Terraform init'){
       steps{
-        script{
-          sh(script: 'cd terraform/deployment; ls -a', returnStdout: true)
-          //sh(script: 'terraform init -backend-config=backend.hcl', returnStdout: true)
-        }
+        sh 'cd terraform/deployment; ls -a'
       }
     }
     // stage('Tflint'){
