@@ -1,6 +1,7 @@
 package test
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/gruntwork-io/terratest/modules/terraform"
@@ -17,7 +18,7 @@ func TestTerraformDeploymentMain(t *testing.T) {
 	// retryable errors in terraform testing.
 	terraformOptions := terraform.WithDefaultRetryableErrors(t, &terraform.Options{
 		// Set the path to the Terraform code that will be tested.
-		TerraformDir: "../deployment/main.tf",
+		TerraformDir: "../deployment/",
 	})
 
 	// Clean up resources with "terraform destroy" at the end of the test.
@@ -33,8 +34,10 @@ func TestTerraformDeploymentMain(t *testing.T) {
 
 	public_subnets := terraform.Output(t, terraformOptions, "public_subnet")
 	private_subnets := terraform.Output(t, terraformOptions, "private_subnet")
-	require.Equal(t, 2, len(public_subnets))
-	require.Equal(t, 2, len(private_subnets))
+	fmt.Println(public_subnets)
+	fmt.Println(private_subnets)
+	require.Equal(t, 51, len(public_subnets))
+	require.Equal(t, 51, len(private_subnets))
 	// Run `terraform output` to get the values of output variables and check they have the expected values.
 	//output := terraform.Output(t, terraformOptions, "hello_world")
 	//assert.Equal(t, "Hello, World!", output)
