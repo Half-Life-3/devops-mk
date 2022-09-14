@@ -31,7 +31,7 @@ func TestTerraformDeploymentMain(t *testing.T) {
 
 	vpc := terraform.Output(t, terraformOptions, "test_aws_vpc")
 	fmt.Printf("type of a is %v\n", reflect.TypeOf(vpc))
-	assert.Equal(t, "string", reflect.TypeOf(vpc))
+	assert.Equal(t, reflect.TypeOf("string"), reflect.TypeOf(vpc))
 	public_subnets := terraform.Output(t, terraformOptions, "public_subnet")
 	private_subnets := terraform.Output(t, terraformOptions, "private_subnet")
 	fmt.Println(public_subnets)
