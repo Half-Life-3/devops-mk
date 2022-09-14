@@ -3,10 +3,10 @@ package test
 import (
 	"fmt"
 	"testing"
-
+	"reflect"
 	"github.com/gruntwork-io/terratest/modules/terraform"
 	
-	//"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
 	//"github.com/aws/aws-sdk-go/aws"
@@ -29,9 +29,9 @@ func TestTerraformDeploymentMain(t *testing.T) {
 
 	// awsRegion := "us-east-1"
 
-	// vpc := terraform.Output(t, terraformOptions, "test_aws_vpc")
-
-
+	vpc := terraform.Output(t, terraformOptions, "test_aws_vpc")
+	fmt.Printf("type of a is %v\n", reflect.TypeOf(vpc))
+	assert.Equal(t, "string", reflect.TypeOf(vpc))
 	public_subnets := terraform.Output(t, terraformOptions, "public_subnet")
 	private_subnets := terraform.Output(t, terraformOptions, "private_subnet")
 	fmt.Println(public_subnets)
