@@ -38,7 +38,7 @@ pipeline {
     stage('Tflint'){
       steps{
         script {
-          sh(script: 'cd terraform/deployment ; tflint --init ; tflint', returnStdout: true).trim()
+          sh(script: 'cd terraform/deployment ; tflint --init ; tflint', returnStdout: true)
           output = sh(script: 'echo $?', returnStdout: true).trim()
           if(output != "0"){
             error "There where issues with the code according to Tflint aborting pipeline"
@@ -51,7 +51,7 @@ pipeline {
         // sh 'go mod init test'
         // sh 'go mod tidy'
         script {
-          output = sh(script: 'cd terraform/test/; go test -v -timeout 10m', returnStdout: true).trim()
+          sh(script: 'cd terraform/test/; go test -v -timeout 10m', returnStdout: true)
           output = sh(script: 'echo $?', returnStdout: true).trim()
           if(output != "0"){
             error "There where issues with the code according to Terratest aborting pipeline"

@@ -36,8 +36,8 @@ func TestTerraformDeploymentMain(t *testing.T) {
 	private_subnets := terraform.Output(t, terraformOptions, "private_subnet")
 	fmt.Println(public_subnets)
 	fmt.Println(private_subnets)
-	require.Equal(t, 2, len(public_subnets))
-	require.Equal(t, 2, len(private_subnets))
+	require.Equal(t, 51, len(public_subnets))
+	require.Equal(t, 51, len(private_subnets))
 	// Run `terraform output` to get the values of output variables and check they have the expected values.
 	//output := terraform.Output(t, terraformOptions, "hello_world")
 	//assert.Equal(t, "Hello, World!", output)
