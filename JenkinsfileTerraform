@@ -1,3 +1,27 @@
+// terraform init -backend-config=backend.hcl
+// terraform plan -out=newPlan.tf
+// terraform apply newPlan.tf
+// terraform destroy
+// BUG: terrform destroy not working when planfile is in same directory
+// go mod init https://github.com/Half-Life-3/devops-mk.git
+// go mod tidy
+// go test -v -timeout 30m
+// TestTerraformDeploymentMain 2022-09-11T12:18:09-04:00 logger.go:66: module.vpc.aws_vpc.test_aws_vpc: Destruction complete after 1s
+// TestTerraformDeploymentMain 2022-09-11T12:18:09-04:00 logger.go:66: 
+// TestTerraformDeploymentMain 2022-09-11T12:18:09-04:00 logger.go:66: Destroy complete! Resources: 16 destroyed.
+// TestTerraformDeploymentMain 2022-09-11T12:18:09-04:00 logger.go:66: 
+// --- FAIL: TestTerraformDeploymentMain (385.69s)
+// FAIL
+// exit status 1
+// FAIL	github.com/Half-Life-3/devops-mk/tree/dev-HL3-demo/terraform	385.697s
+// TestTerraformDeploymentMain 2022-09-11T12:46:34-04:00 logger.go:66: module.vpc.aws_vpc.test_aws_vpc: Destruction complete after 0s
+// TestTerraformDeploymentMain 2022-09-11T12:46:34-04:00 logger.go:66: 
+// TestTerraformDeploymentMain 2022-09-11T12:46:34-04:00 logger.go:66: Destroy complete! Resources: 16 destroyed.
+// TestTerraformDeploymentMain 2022-09-11T12:46:34-04:00 logger.go:66: 
+// --- PASS: TestTerraformDeploymentMain (212.22s)
+// PASS
+// ok  	github.com/Half-Life-3/devops-mk/tree/dev-HL3-demo/terraform	212.226s
+
 pipeline {
   agent any
   stages{
@@ -8,17 +32,41 @@ pipeline {
     }
     stage('Terraform init'){
       steps{
-        sh 'cd terraform; terraform init'
+        sh 'cd terraform/deployment; terraform init -backend-config=backend.hcl'
+      }
+    }
+    stage('Tflint'){
+      steps{
+        script {
+          sh(script: 'cd terraform/deployment ; tflint --init ; tflint', returnStdout: true)
+          output = sh(script: 'echo $?', returnStdout: true).trim()
+          if(output != "0"){
+            error "There where issues with the code according to Tflint aborting pipeline"
+          }
+        }
+      }
+    }
+    stage('Terratest') {
+      steps {
+        // sh 'go mod init test'
+        // sh 'go mod tidy'
+        script {
+          sh(script: 'cd terraform/test/; go test -v -timeout 10m', returnStdout: true)
+          output = sh(script: 'echo $?', returnStdout: true).trim()
+          if(output != "0"){
+            error "There where issues with the code according to Terratest aborting pipeline"
+          }
+        }
       }
     }
     stage('Plan') {
       steps {
         script{
             try{
-                sh(script: 'cd terraform; terraform plan -out ${PLAN_FILE}.tfplan')
+                sh(script: 'cd terraform/deployment; terraform plan -out ${PLAN_FILE}.tfplan')
             }
             catch(all){
-                sh(script: 'terraform plan')
+                sh(script: 'cd terraform/deployment; terraform plan')
             }
         }
       }
@@ -27,10 +75,10 @@ pipeline {
       steps {
         script {
             try{
-                sh(script: 'cd terraform; terraform apply -auto-approve ${PLAN_FILE}.tfplan')
+                sh(script: 'cd terraform/deployment; terraform apply -auto-approve ${PLAN_FILE}.tfplan')
             }
             catch(all){
-                sh(script: 'terraform apply')
+                sh(script: 'cd terraform/deployment; terraform apply')
             }
         }
       }
