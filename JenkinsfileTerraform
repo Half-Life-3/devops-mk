@@ -39,6 +39,7 @@ pipeline {
       steps{
         script {
           output = sh(script: 'cd terraform/deployment ; tflint --init ; tflint; echo $?', returnStdout: true).trim()
+          println("output = ", output)
           if(output != 0){
             error "There where issues with the code according to Tflint aborting pipeline"
           }
