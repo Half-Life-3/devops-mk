@@ -38,7 +38,8 @@ pipeline {
     stage('Tflint'){
       steps{
         script {
-          output = sh(script: 'cd terraform/deployment ; tflint --init ; tflint; echo $?', returnStdout: true).trim()
+          sh(script: 'cd terraform/deployment ; tflint --init ; tflint; echo $?', returnStdout: true).trim()
+          sh(script: 'echo $?', returnStdout: true).trim()
           println("output = ")
           println(output)
           if(output != 0){
