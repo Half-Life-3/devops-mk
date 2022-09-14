@@ -40,9 +40,7 @@ pipeline {
         script {
           sh(script: 'cd terraform/deployment ; tflint --init ; tflint; echo $?', returnStdout: true).trim()
           output = sh(script: 'echo $?', returnStdout: true).trim()
-          println(output)
-          println("output = $output")
-          if(output != 0){
+          if(output != "0"){
             error "There where issues with the code according to Tflint aborting pipeline"
           }
         }
