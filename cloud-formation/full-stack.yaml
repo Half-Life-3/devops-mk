@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: "2010-09-09"
-#aws cloudformation create-stack  --stack-name cloud-formation-template-stack --template-body file://fullstack.yaml
+#aws cloudformation create-stack  --stack-name cloud-formation-template-stack --template-body file://full-stack.yaml
 Description: >
   create a vpc which has 2 public and 2 private subnets
 
@@ -26,6 +26,15 @@ Metadata:
           - SSHLocation
 
 Parameters:
+  EnvType:
+    Description: Environment type.
+    Default: test
+    Type: String
+    AllowedValues:
+      - prod
+      - test
+    ConstraintDescription: must specify prod or test.
+
   VpcCIDR:
     Default: 10.0.0.0/16
     Description: Enter IP range for this VPC
@@ -60,7 +69,55 @@ Parameters:
     MinLength: '9'
     Type: String
 
+Conditions:
+  CreateProdResources: !Equals 
+    - !Ref EnvType
+    - prod
+  CreateTestResources: !Equals 
+    - !Ref EnvType
+    - test
+    
 Resources:
+  EC2Instance:
+      Type: 'AWS::EC2::Instance'
+      Properties:
+        ImageId: ami-0ff8a91507f77f867
+  MountPoint:
+    Type: 'AWS::EC2::VolumeAttachment'
+    Condition: CreateProdResources
+    Properties:
+      InstanceId: !Ref EC2Instance
+      VolumeId: !Ref NewVolume
+      Device: /dev/sdh
+  NewVolume:
+    Type: 'AWS::EC2::Volume'
+    Condition: CreateProdResources
+    Properties:
+      Size: 100
+      AvailabilityZone: !GetAtt 
+        - EC2Instance
+        - AvailabilityZone
+
+  EC2Instance:
+      Type: 'AWS::EC2::Instance'
+      Properties:
+        ImageId: ami-0ff8a91507f77f867
+  MountPoint:
+    Type: 'AWS::EC2::VolumeAttachment'
+    Condition: CreateTestResources
+    Properties:
+      InstanceId: !Ref EC2Instance
+      VolumeId: !Ref NewVolume
+      Device: /dev/sdh
+  NewVolume:
+    Type: 'AWS::EC2::Volume'
+    Condition: CreateTestResources
+    Properties:
+      Size: 50
+      AvailabilityZone: !GetAtt 
+        - EC2Instance
+        - AvailabilityZone
+
   # Create VPC
   VPC: #this line is the name of the resource
     # is the type of resource
