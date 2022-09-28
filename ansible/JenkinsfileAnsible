@@ -8,7 +8,7 @@ pipeline {
     }
     stage('Check ec2_is running'){
         steps{
-            sh './aws_login.sh'
+            sh 'sleep 5'
             // script{
             //     imageid = sh(script: "aws ec2 describe-instances --filters 'Name=tag:Name,Values=ansible_ec2' --output text --query 'Reservations[*].Instances[*].InstanceId'", returnStdout: true)
             //     status = sh(script: "aws ec2 describe-instance-status --instance-id $imageid --query 'InstanceStatuses[*].InstanceState[].Name' --output text",  returnStdout: true).trim()
@@ -26,7 +26,7 @@ pipeline {
     } 
     stage('Ansible syntax check'){
       steps{
-        sh './aws_login.sh'
+        sh 'sleep 10'
         // script{
         //     sh(script: 'ansible-playbook ansible.yaml --syntax-check', returnStdout: true)
         //     output = sh(script: 'echo $?', returnStdout: true).trim()
@@ -38,7 +38,7 @@ pipeline {
     }
     stage('Deploy Playbook'){
       steps{
-        sh './aws_login.sh'
+        sh 'sleep 24'
         // script {
         //   sh(script: 'ansible-playbook ansible.yaml -i hosts.yaml', returnStdout: true)
         // }
@@ -46,7 +46,7 @@ pipeline {
     }
     stage('Get Jenkins password'){
         steps{
-            sh './aws_login.sh'
+            sh 'sleep 43'
         //   script {
         //     sh(script: "chmod 400 ansible_ec2.pem", returnStdout: true)
         //     sh(script: "ssh -i 'ansible_ec2.pem' ec2-user@ec2-44-210-112-238.compute-1.amazonaws.com", returnStdout: true)
