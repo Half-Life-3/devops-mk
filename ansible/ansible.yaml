@@ -1,0 +1,42 @@
+#ansible-playbook ansible.yaml --syntax-check
+---
+- name: sample book
+  hosts: ansible_ec2
+  remote_user: ec2-user
+  become: false # means must be root to execute
+  tasks:
+    - name: update instance
+      yum:
+        name: "*"
+        state: latest
+
+    - name: test connect
+      command: wall "Hello World"
+
+    - name: download java 11
+      command: sudo amazon-linux-extras install java-openjdk11 -y
+
+    - name: add jenkins repo
+      command: sudo wget -O /etc/yum.repos.d/jenkins.repo \ https://pkg.jenkins.io/redhat-stable/jenkins.repo
+
+    - name: import a key file from Jenkins CI 
+      command: sudo rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io.key
+
+    - name: install jenkins
+      command: sudo yum install jenkins -y
+
+    - name : enable jenkins 
+      command: sudo systemctl enable jenkins
+
+    - name: start jenkins
+      command: sudo systemctl start jenkins
+
+
+
+
+
+
+#jenkins 
+#java
+#docker
+#aws cli

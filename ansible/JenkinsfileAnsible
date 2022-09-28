@@ -1,0 +1,63 @@
+pipeline {
+  agent any
+  stages{
+    stage('AWS Login') {
+        steps{
+            sh './aws_login.sh'
+        }
+    }
+    stage('Check ec2_is running'){
+        script{
+            imageid = sh(script: "aws ec2 describe-instances --filters 'Name=tag:Name,Values=ansible_ec2' --output text --query 'Reservations[*].Instances[*].InstanceId'", returnStdout: true)
+            status = sh(script: "aws ec2 describe-instance-status --instance-id $imageid --query 'InstanceStatuses[*].InstanceState[].Name' --output text",  returnStdout: true).trim()
+            if(status != "running"){
+                output = sh("aws ec2 describe-instances --filters 'Name=tag:Name,Values=ansible_ec2' --output text --query 'Reservations[*].Instances[*].State' | grep -c stopped", returnStdout: true).trim
+                if(output == 1){
+                    sh(script: "aws ec2 start-instances --instance-ids i-0b2b7dc2f327c9a0f", returnStdout: true)
+                }
+                else{
+                    error "ec2 not properly provisioned"
+                }
+            }
+        }
+    } 
+    stage('Ansible syntax check'){
+      steps{
+        script{
+            sh(script: 'ansible-playbook ansible.yaml --syntax-check', returnStdout: true)
+            output = sh(script: 'echo $?', returnStdout: true).trim()
+            if(output != "0"){
+                error "There where issues with the playbook aborting pipeline"
+            }
+        }
+      }
+    }
+    stage('Deploy Playbook'){
+      steps{
+        script {
+          sh(script: 'ansible-playbook ansible.yaml -i hosts.yaml', returnStdout: true)
+          output = sh(script: 'echo $?', returnStdout: true).trim()
+        }
+      }
+    }
+    stage('Get Jenkins password'){
+        steps{
+          script {
+            sh(script: "chmod 400 ansible_ec2.pem", returnStdout: true)
+            sh(script: "ssh -i 'ansible_ec2.pem' ec2-user@ec2-44-210-112-238.compute-1.amazonaws.com", returnStdout: true)
+            password = sh(script: 'sudo cat /var/lib/jenkins/secrets/initialAdminPassword', returnStdout: true)
+            sh(script: "echo $password > JenkinsIntialpassword.txt", returnStdout: true)
+          }
+        }
+      }  
+  }
+}
+
+
+
+
+// aws ec2 describe-instances --filters 'Name=tag:Name,Values=ansible_ec2'   --output text --query 'Reservations[*].Instances[*].InstanceId'
+// ansible-playbook ansible.yaml --syntax-check
+// ansible-playbook ansible.yaml -i hosts.yaml
+// chmod 400 ansible_ec2.pem
+// ssh -i "ansible_ec2.pem" ec2-user@ec2-44-210-112-238.compute-1.amazonaws.com

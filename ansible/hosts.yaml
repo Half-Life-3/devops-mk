@@ -1,0 +1,5 @@
+all:
+  hosts:
+    ansible_ec2:
+      ansible_host: 44.210.112.238
+      ansible_ssh_private_key_file: /home/michael/Downloads/ansible_ec2.pem
