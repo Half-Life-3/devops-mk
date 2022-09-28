@@ -17,7 +17,8 @@ pipeline {
                         sh(script: "aws ec2 start-instances --instance-ids i-0b2b7dc2f327c9a0f", returnStdout: true)
                     }
                     else{
-                        error "ec2 not properly provisioned"
+                        sh 'create_ec2.sh'
+                        //error "ec2 not properly provisioned"
                     }
                 }
             }
