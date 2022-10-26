@@ -12,8 +12,6 @@ jobs:
   deploy-cloud-formation:
     runs-on: ubuntu-latest
     steps:
-      - name : install aws cli
-
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
