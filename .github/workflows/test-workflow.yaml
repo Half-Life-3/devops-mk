@@ -12,6 +12,8 @@ jobs:
   deploy-cloud-formation:
     runs-on: ubuntu-latest
     steps:
+      - name : install aws cli
+
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -19,9 +21,10 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
 
+
       # - uses: actions/checkout@v3
       # - run: aws configure
       # - run: echo "$AWS_ACCESS_KEY_ID"; echo "$AWS_SECRET_ACCESS_KEY"; echo "$AWS_DEFAULT_REGION"; echo "yaml"
       #- run: sh aws_login.sh
-      - run: cloudformation; aws cloudformation create-stack  --stack-name cloud-formation-template-stack --template-body file://full-stack.yaml
-      - run: echo $?
+        - run: cloudformation; aws cloudformation create-stack  --stack-name cloud-formation-template-stack --template-body file://full-stack.yaml
+        - run: echo $?
