@@ -20,11 +20,13 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
-
+      - run: curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+      - run: unzip awscliv2.zip
+      - run: sudo ./aws/install
 
       # - uses: actions/checkout@v3
       # - run: aws configure
       # - run: echo "$AWS_ACCESS_KEY_ID"; echo "$AWS_SECRET_ACCESS_KEY"; echo "$AWS_DEFAULT_REGION"; echo "yaml"
       #- run: sh aws_login.sh
-        - run: cloudformation; aws cloudformation create-stack  --stack-name cloud-formation-template-stack --template-body file://full-stack.yaml
-        - run: echo $?
+      - run: cloudformation; aws cloudformation create-stack  --stack-name cloud-formation-template-stack --template-body file://full-stack.yaml
+      - run: echo $?
