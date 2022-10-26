@@ -20,6 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      - run: aws configure
       - run: sh aws_login.sh
       - run: cd ../../cloudformation; aws cloudformation create-stack  --stack-name cloud-formation-template-stack --template-body file://full-stack.yaml
       - run: echo $?
