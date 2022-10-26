@@ -23,5 +23,5 @@ jobs:
       - run: sudo ./aws/install --update
       - run: pwd
       - run: ls -a
-      - run: cd /home/runner/work/devops-mk/devops-mk/cloud-formation; aws cloudformation create-stack  --stack-name cloud-formation-template-stack --template-body file://full-stack.yaml
+      # - run: cd /home/runner/work/devops-mk/devops-mk/cloud-formation; aws cloudformation create-stack  --stack-name cloud-formation-template-stack --template-body file://full-stack.yaml
       - run: echo $?
