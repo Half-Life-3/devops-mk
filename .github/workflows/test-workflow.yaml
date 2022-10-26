@@ -20,7 +20,7 @@ jobs:
           aws-region: us-east-1
       - run: curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
       - run: unzip awscliv2.zip
-      - run: sudo ./aws/install
+      - run: sudo ./aws/install --update
 
       # # - uses: actions/checkout@v3
       # # - run: aws configure
