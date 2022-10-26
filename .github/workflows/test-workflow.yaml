@@ -21,12 +21,7 @@ jobs:
       - run: curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
       - run: unzip awscliv2.zip
       - run: sudo ./aws/install --update
-
-      # # - uses: actions/checkout@v3
-      # # - run: aws configure
-      # # - run: echo "$AWS_ACCESS_KEY_ID"; echo "$AWS_SECRET_ACCESS_KEY"; echo "$AWS_DEFAULT_REGION"; echo "yaml"
-      # #- run: sh aws_login.sh
       - run: pwd
       - run: ls -a
-      # - run: cd /home/runner/work/devops-mk/devops-mk/cloud-formation; aws cloudformation create-stack  --stack-name cloud-formation-template-stack --template-body file://full-stack.yaml
+      - run: cd /home/runner/work/devops-mk/devops-mk/cloud-formation; aws cloudformation create-stack  --stack-name cloud-formation-template-stack --template-body file://full-stack.yaml
       - run: echo $?
