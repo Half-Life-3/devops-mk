@@ -3,11 +3,11 @@ on:
   push:
     branches:
       - feature-HL3-48
-# env:
-#   AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
-#   AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
-#   AWS_DEFAULT_REGION:
-#   AWS_OUTPUT_FILE: yaml
+env:
+  AWS_ACCESS_KEY_ID: ${{secrets.AWS_ACCESS_KEY_ID}}
+  AWS_SECRET_ACCESS_KEY: ${{secrets.AWS_SECRET_ACCESS_KEY}}
+  AWS_DEFAULT_REGION: ${{secrets.AWS_SECRET_ACCESS_KEY}}
+  AWS_OUTPUT_FILE: ${{secrets.AWS_OUTPUT_TYPE}}
 # aws configure
 # echo ${AWS_ACCESS_KEY_ID}
 # echo ${AWS_SECRET_ACCESS_KEY}
