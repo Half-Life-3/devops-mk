@@ -1,0 +1,57 @@
+resources:
+  - name:       aline-user-microservice
+     type:      Image
+     configuration:
+       registry:            quidem/aline-user
+       region:              us-east-1               
+       imageName:           aline-user-microservice
+       imageTag:            latest
+       autoPull:            true 
+      #  pin:
+      #    versionId:         <number>
+      #    imageTag:          <string>
+  - name:       aline-underwriter-microservice
+     type:      Image
+     configuration:
+       registry:            quidem/aline-underwriter
+       region:              us-east-1               
+       imageName:           aline-underwriter-microservice
+       imageTag:            latest
+       autoPull:            true 
+      #  pin:
+      #    versionId:         <number>
+      #    imageTag:          <string>
+  - name:       aline-account-microservice
+     type:      Image
+     configuration:
+       registry:            quidem/aline-account
+       region:              us-east-1               
+       imageName:           aline-account-microservice
+       imageTag:            latest
+       autoPull:            true 
+      #  pin:
+      #    versionId:         <number>
+      #    imageTag:          <string>
+  - name:       aline-transaction-microservice
+     type:      Image
+     configuration:
+       registry:            quidem/aline-transaction
+       region:              us-east-1               
+       imageName:           aline-transaction-microservice
+       imageTag:            latest
+       autoPull:            true 
+      #  pin:
+      #    versionId:         <number>
+      #    imageTag:          <string>
+  - name:       aline-bank-microservice
+     type:      Image
+     configuration:
+       registry:            quidem/aline-bank
+       region:              us-east-1               
+       imageName:           aline-bank-microservice
+       imageTag:            latest
+       autoPull:            true 
+      #  pin:
+      #    versionId:         <number>
+      #    imageTag:          <string>
+  

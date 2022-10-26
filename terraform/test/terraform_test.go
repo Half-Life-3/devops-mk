@@ -13,7 +13,7 @@ import (
 	//"github.com/aws/aws-sdk-go/service/ec2"
 )
 
-func TestTerraformDeploymentMain(t *testing.T) {
+	func TestTerraformDeploymentMain(t *testing.T) {
 	// Construct the terraform options with default retryable errors to handle the most common
 	// retryable errors in terraform testing.
 	terraformOptions := terraform.WithDefaultRetryableErrors(t, &terraform.Options{
@@ -28,7 +28,6 @@ func TestTerraformDeploymentMain(t *testing.T) {
 	terraform.InitAndApply(t, terraformOptions)
 
 	// awsRegion := "us-east-1"
-
 	vpc := terraform.Output(t, terraformOptions, "test_aws_vpc")
 	fmt.Printf("type of a is %v\n", reflect.TypeOf(vpc))
 	assert.Equal(t, reflect.TypeOf("string"), reflect.TypeOf(vpc))
