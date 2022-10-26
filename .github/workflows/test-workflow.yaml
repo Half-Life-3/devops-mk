@@ -1,0 +1,16 @@
+name: test-actions
+on: 
+  push:
+    branches:
+      - feature-HL3-48
+jobs:
+  deploy-cloud-formation:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '14'
+      - run: sudo sh ../../aws_login.sh
+      - run: cd ../../cloudformation; aws cloudformation create-stack  --stack-name cloud-formation-template-stack --template-body file://full-stack.yaml
+      - run: echo $?
