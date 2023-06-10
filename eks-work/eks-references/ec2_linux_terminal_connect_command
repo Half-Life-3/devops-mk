@@ -1,0 +1,1 @@
+ssh -i /home/michael/Downloads/eks_access_point.pem ubuntu@ec2-3-90-69-140.compute-1.amazonaws.com

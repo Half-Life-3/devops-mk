@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: underwriter
+  labels:
+    app: underwriter
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: underwriter
+  template:
+    metadata:
+      labels:
+        app: underwriter
+    spec:
+      containers:
+        - name: underwriter-ms
+          image: aline-underwriter-microservice:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8071
+          envFrom:
+          - secretRef:
+              name: microservices-secret
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: underwriter-service
+spec:
+  selector:
+    app: underwriter
+  type: NodePort
+  ports:
+  - protocol: TCP
+    nodePort: 30001
+    port: 8071
+    targetPort: 8071

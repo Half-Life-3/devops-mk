@@ -1,0 +1,99 @@
+https://docs.aws.amazon.com/eks/latest/userguide/create-cluster.html
+https://docs.aws.amazon.com/eks/latest/userguide/getting-started-eksctl.html
+https://helm.sh/docs/intro/install/
+https://docs.aws.amazon.com/eks/latest/userguide/aws-load-balancer-controller.html
+https://kubernetes.io/docs/concepts/services-networking/ingress/
+#eksctl delete cluster --name myeks-cluster --region=us-east-1
+eksctl create cluster --name myeks-cluster --region=us-east-1 --zones=us-east-1a,us-east-1b,us-east-1c,us-east-1d --fargate
+#eksctl delete cluster --name myeks-cluster --region=us-east-1
+#eksctl create fargateprofile --cluster myeks-cluster --region us-east-1 --name capstone-cluster --namespace kube-system
+eksctl create fargateprofile --namespace kube-system --cluster myeks-cluster --region us-east-1
+
+aws iam create-policy \
+    --policy-name AWSLoadBalancerControllerIAMPolicy \
+    --policy-document file://iam_policy.json
+
+curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+chmod 700 get_helm.sh
+./get_helm.sh
+
+eksctl delete iamserviceaccount --cluster myeks-cluster --name=aws-load-balancer-controller
+
+eksctl utils associate-iam-oidc-provider --region "us-east-1" --cluster myeks-cluster --approve
+
+
+eksctl create iamserviceaccount \
+  --name aws-load-balancer-controller \
+  --namespace kube-system \
+  --cluster myeks-cluster \
+  --role-name "AmazonEKSLoadBalancerControllerRole" \
+  --attach-policy-arn arn:aws:iam::047032559530:policy/AWSLoadBalancerControllerIAMPolicy \
+  --region us-east-1 \
+  --approve \
+  --override-existing-serviceaccounts
+
+
+
+  #--override
+
+aws eks describe-cluster --name myeks-cluster --query "cluster.identity.oidc.issuer" --output text
+
+helm install aws-load-balancer-controller eks/aws-load-balancer-controller \
+  -n kube-system \
+  --set clusterName=myeks-cluster \
+  --set serviceAccount.create=false \
+  --set serviceAccount.name=aws-load-balancer-controller \
+  --set region=us-east-1 \
+  --set vpcId=vpc-065c3faa4809658b6 \
+  --set image.repository=602401143452.dkr.ecr.us-east-1.amazonaws.com/amazon/aws-load-balancer-controller
+
+helm install aws-load-balancer-controller eks/aws-load-balancer-controller \
+  -n kube-system \
+  --set clusterName=myeks-cluster \
+  --set serviceAccount.create=false \
+  --set serviceAccount.name=aws-load-balancer-controller \
+  --set region=us-east-1 \
+  --set vpcId=vpc-065c3faa4809658b6 \
+
+
+
+
+helm uninstall aws-load-balancer-controller -n kube-system
+
+
+#beautiful-wardrobe-1655913171
+
+#amazing-creature-1655153625
+
+
+
+
+ 2059  eksctl utils associate-iam-oidc-provider --cluster amazing-creature-1655153625 --approve
+ 2066  eksctl create iamserviceaccount   --cluster=amazing-creature-1655153625   --namespace=kube-system   --name=aws-load-balancer-controller   --role-name "AmazonEKSLoadBalancerControllerRole"   --attach-policy-arn=arn:aws:iam::047032559530:policy/AWSLoadBalancerControllerIAMPolicy   --override
+ 2067  eksctl create iamserviceaccount   --cluster=amazing-creature-1655153625   --namespace=kube-system   --name=aws-load-balancer-controller   --role-name "AmazonEKSLoadBalancerControllerRole"   --attach-policy-arn=arn:aws:iam::047032559530:policy/AWSLoadBalancerControllerIAMPolicy   --override-existing-service-accounts
+ 2068  eksctl create iamserviceaccount   --cluster=amazing-creature-1655153625   --namespace=kube-system   --name=aws-load-balancer-controller   --role-name "AmazonEKSLoadBalancerControllerRole"   --attach-policy-arn=arn:aws:iam::047032559530:policy/AWSLoadBalancerControllerIAMPolicy   --override-existing-serviceaccounts
+
+
+
+
+
+ 2059  eksctl utils associate-iam-oidc-provider --cluster myeks-cluster --approve
+ 2066  eksctl create iamserviceaccount   --cluster=myeks-cluster   --namespace=kube-system   --name=aws-load-balancer-controller   --role-name "AmazonEKSLoadBalancerControllerRole"   --attach-policy-arn=arn:aws:iam::047032559530:policy/AWSLoadBalancerControllerIAMPolicy   --override
+ 2067  eksctl create iamserviceaccount   --cluster=myeks-cluster   --namespace=kube-system   --name=aws-load-balancer-controller   --role-name "AmazonEKSLoadBalancerControllerRole"   --attach-policy-arn=arn:aws:iam::047032559530:policy/AWSLoadBalancerControllerIAMPolicy   --override-existing-service-accounts
+ 2068  eksctl create iamserviceaccount   --cluster=myeks-cluster   --namespace=kube-system   --name=aws-load-balancer-controller   --role-name "AmazonEKSLoadBalancerControllerRole"   --attach-policy-arn=arn:aws:iam::047032559530:policy/AWSLoadBalancerControllerIAMPolicy   --override-existing-serviceaccounts
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
